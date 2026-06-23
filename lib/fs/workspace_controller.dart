@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Drives the file browser and keeps the canonical workspace mirrored with the
 // kernels. Pushes the workspace into a kernel when it becomes ready / is
 // switched to, and pulls kernel-written files back when a run completes.

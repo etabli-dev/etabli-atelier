@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // The navigation shell: responsive rail/bottom-bar over the six feature panes,
 // with a per-session kernel switcher (R / Python — two separate kernels).
 

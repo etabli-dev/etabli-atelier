@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Serves the bundled runtime assets (WebR, later Pyodide) and the host page
 // over http://localhost so the WebView loads them with a proper origin and
 // correct MIME types (.mjs => text/javascript, .wasm => application/wasm).

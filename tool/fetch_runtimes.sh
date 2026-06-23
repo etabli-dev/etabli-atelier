@@ -1,3 +1,6 @@
+# Copyright 2026 Raban Heller
+# SPDX-License-Identifier: Apache-2.0
+
 #!/usr/bin/env bash
 # Fetch vendored open-source WASM runtimes from their canonical upstream
 # release URLs into assets/runtimes/. Pin exact versions + checksums.

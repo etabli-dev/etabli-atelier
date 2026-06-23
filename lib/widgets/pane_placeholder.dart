@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Consistent "coming in milestone N" placeholder for not-yet-built panes.
 
 import 'package:flutter/material.dart';

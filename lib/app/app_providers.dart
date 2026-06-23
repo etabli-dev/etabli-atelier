@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Riverpod providers wiring app-wide state (settings, theme, active kernel).
 // Uses the Riverpod 3.x Notifier API.
 

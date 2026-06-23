@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Établi Atelier — kernel host bootstrap (runs INSIDE the WebView).
 //
 // Owns the on-device language kernels and bridges their I/O to the Flutter

@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Hosts the kernel WebView for the whole app lifetime. The WebView is a pure
 // compute surface — it is kept effectively invisible (1x1, behind the UI); all
 // user-facing output is rendered natively by the Flutter shell from the events

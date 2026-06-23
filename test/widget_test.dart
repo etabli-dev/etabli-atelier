@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Smoke test for the navigation shell. SettingsStore is faked via an in-memory
 // Hive box so the test needs no platform channels.
 

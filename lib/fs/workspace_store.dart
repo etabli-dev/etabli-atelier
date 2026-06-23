@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // The canonical workspace — real files on device storage under the app's
 // documents directory. This is the source of truth that survives restarts and
 // that both kernels are mirrored against (see KernelController FS sync), so a

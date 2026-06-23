@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Bridges the in-WebView kernels (R via WebR, Python via Pyodide) to the
 // Flutter shell. The WebView calls back through the `onKernelEvent` JS handler
 // into [handleEvent]; the shell drives the kernels by evaluating

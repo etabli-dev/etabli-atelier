@@ -1,3 +1,6 @@
+// Copyright 2026 Raban Heller
+// SPDX-License-Identifier: Apache-2.0
+
 // Lightweight settings persistence backed by Hive.
 //
 // Holds non-secret app preferences (theme, font size, default kernel). Secrets
