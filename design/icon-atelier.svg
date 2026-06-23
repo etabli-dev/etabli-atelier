@@ -1,0 +1,27 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Etabli Atelier app icon — shared green tile with atelier glyph. -->
+  <!-- Glyph (per _style/icons/ICON_SPEC.md): { } braces over a small terminal prompt. -->
+  <rect width="1024" height="1024" fill="#28A745"/>
+  <g id="glyph" fill="none" stroke="#FFFFFF" stroke-width="36"
+     stroke-linecap="round" stroke-linejoin="round">
+    <!-- Left brace { -->
+    <path d="M 380 320
+             C 320 320, 310 360, 310 410
+             L 310 470
+             C 310 510, 290 530, 260 530
+             C 290 530, 310 550, 310 590
+             L 310 650
+             C 310 700, 320 740, 380 740"/>
+    <!-- Right brace } -->
+    <path d="M 644 320
+             C 704 320, 714 360, 714 410
+             L 714 470
+             C 714 510, 734 530, 764 530
+             C 734 530, 714 550, 714 590
+             L 714 650
+             C 714 700, 704 740, 644 740"/>
+    <!-- Terminal prompt mark below: > _ -->
+    <path d="M 430 810 L 480 840 L 430 870" stroke-width="32"/>
+    <path d="M 530 875 L 610 875" stroke-width="32"/>
+  </g>
+</svg>
