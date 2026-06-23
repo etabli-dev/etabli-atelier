@@ -13,11 +13,11 @@ Categories:
   - Science & Education
 License: Apache-2.0
 AuthorName: Raban Heller
-SourceCode: https://github.com/etabli-dev/etabli-atelier
-IssueTracker: https://github.com/etabli-dev/etabli-atelier/issues
+SourceCode: https://github.com/etabli-dev/atelier
+IssueTracker: https://github.com/etabli-dev/atelier/issues
 Liberapay: rabanheller
 RepoType: git
-Repo: https://github.com/etabli-dev/etabli-atelier.git
+Repo: https://github.com/etabli-dev/atelier.git
 
 Builds:
   - versionName: "1.0"
