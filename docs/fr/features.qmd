@@ -37,8 +37,9 @@ Il n'y a aucun accès réseau intégré. Le seul moment où l'application irait 
 
 ## Distribution
 
-| Canal | App |
-|-------|-----|
-| App Store (iOS) · Google Play (Android) | Atelier |
-| F-Droid — dépôt propre à Etabli | Atelier (embarque des runtimes WASM précompilés et n'est donc pas dans le dépôt F-Droid principal) |
+| Canal | Statut |
+|-------|--------|
+| Android (APK) | **Version de développement** — le seul canal actuel, via [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
+| App Store (iOS) · Google Play (Android) | prévu — pas encore disponible |
+| F-Droid — dépôt propre à Établi | prévu — pas encore disponible (embarquera des runtimes WASM précompilés et n'est donc pas destiné au dépôt F-Droid principal) |
 | Code source | [`etabli-dev/etabli-atelier`](https://github.com/etabli-dev/etabli-atelier) |

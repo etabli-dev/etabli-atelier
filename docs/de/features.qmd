@@ -37,8 +37,9 @@ Es gibt keinen integrierten Netzzugriff. Die einzige Stelle, an der die App Byte
 
 ## Bezug
 
-| Kanal | App |
-|-------|-----|
-| App Store (iOS) · Google Play (Android) | Atelier |
-| F-Droid — eigenes Etabli-Repository | Atelier (bündelt vorgefertigte WASM-Laufzeiten, daher nicht im F-Droid-Hauptrepo) |
+| Kanal | Status |
+|-------|--------|
+| Android (APK) | **Entwicklungs-Build** — derzeit der einzige Kanal, über [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
+| App Store (iOS) · Google Play (Android) | geplant — noch nicht verfügbar |
+| F-Droid — eigenes Établi-Repository | geplant — noch nicht verfügbar (bündelt vorgefertigte WASM-Laufzeiten, daher nicht für das F-Droid-Hauptrepo vorgesehen) |
 | Quellcode | [`etabli-dev/etabli-atelier`](https://github.com/etabli-dev/etabli-atelier) |

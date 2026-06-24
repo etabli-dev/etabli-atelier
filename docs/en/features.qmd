@@ -37,8 +37,9 @@ There is no built-in network access. The only point where the app would fetch by
 
 ## Where to get it
 
-| Channel | App |
-|---------|-----|
-| App Store (iOS) · Google Play (Android) | Atelier |
-| F-Droid — Etabli's own repository | Atelier (ships pre-built WASM runtimes, so it is not in the main F-Droid repo) |
+| Channel | Status |
+|---------|--------|
+| Android (APK) | **Development build** — the only current channel, via [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
+| App Store (iOS) · Google Play (Android) | planned — not yet available |
+| F-Droid — Établi's own repository | planned — not yet available (will ship pre-built WASM runtimes, so it is not intended for the main F-Droid repo) |
 | Source code | [`etabli-dev/etabli-atelier`](https://github.com/etabli-dev/etabli-atelier) |

@@ -1,5 +1,5 @@
 ---
-title: "Etabli Atelier"
+title: "Établi Atelier"
 sidebar: en
 ---
 
@@ -9,7 +9,7 @@ sidebar: en
 
 > Run R and Python on your phone, fully offline.
 
-Etabli Atelier is a polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded WebAssembly runtime. Both kernels share a single virtual filesystem; `numpy`, `pandas`, `scipy`, `matplotlib` and `scikit-learn` come pre-bundled. Plots from base R, ggplot2 and matplotlib can be exported as PNG. No network, no account, no telemetry.
+Établi Atelier is a polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded WebAssembly runtime. Both kernels share a single virtual filesystem; `numpy`, `pandas`, `scipy`, `matplotlib` and `scikit-learn` come pre-bundled. Plots from base R, ggplot2 and matplotlib can be exported as PNG. No network, no account, no telemetry.
 
 ![Atelier — main view on Android](../_screens/android-main.png){width=320}
 
@@ -33,11 +33,15 @@ No analytics, no third-party SDKs. The app runs fully offline; neither code nor 
 
 ## Installation
 
-| Platform | Source |
-|----------|--------|
-| iOS      | App Store |
-| Android  | Google Play and the Etabli F-Droid repository |
-| Desktop  | direct build from the repo |
+Établi Atelier is **under active development**. There are no App Store, Google Play or F-Droid releases yet.
+
+| Channel | Status |
+|---------|--------|
+| Android (APK) | **Development build** via [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
+| App Store (iOS) | planned — not yet available |
+| Google Play | planned — not yet available |
+| F-Droid | planned — not yet available |
+| Desktop (macOS, Windows, Linux) | build from source |
 
 Details: see [Getting Started](getting-started.qmd).
 

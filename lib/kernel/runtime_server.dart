@@ -1,4 +1,4 @@
-// Copyright 2026 Raban Heller
+// Copyright 2026 R. Heller
 // SPDX-License-Identifier: Apache-2.0
 
 // Serves the bundled runtime assets (WebR, later Pyodide) and the host page

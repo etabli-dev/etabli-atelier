@@ -1,5 +1,5 @@
 ---
-title: "Etabli Atelier"
+title: "Établi Atelier"
 sidebar: fr
 ---
 
@@ -9,7 +9,7 @@ sidebar: fr
 
 > R et Python sur votre téléphone, entièrement hors ligne.
 
-Etabli Atelier est un IDE polyglotte qui exécute R (via WebR) et Python (via Pyodide) comme noyaux commutables dans un runtime WebAssembly embarqué. Les deux noyaux partagent un même système de fichiers virtuel ; `numpy`, `pandas`, `scipy`, `matplotlib` et `scikit-learn` sont préinstallés. Les graphiques issus de base R, ggplot2 et matplotlib s'exportent en PNG. Aucun réseau, aucun compte, aucune télémétrie.
+Établi Atelier est un IDE polyglotte qui exécute R (via WebR) et Python (via Pyodide) comme noyaux commutables dans un runtime WebAssembly embarqué. Les deux noyaux partagent un même système de fichiers virtuel ; `numpy`, `pandas`, `scipy`, `matplotlib` et `scikit-learn` sont préinstallés. Les graphiques issus de base R, ggplot2 et matplotlib s'exportent en PNG. Aucun réseau, aucun compte, aucune télémétrie.
 
 ![Atelier — vue principale sur Android](../_screens/android-main.png){width=320}
 
@@ -33,11 +33,15 @@ Aucun outil d'analyse, aucun SDK tiers. L'application fonctionne entièrement ho
 
 ## Installation
 
-| Plateforme | Distribution |
-|------------|--------------|
-| iOS        | App Store |
-| Android    | Google Play et le dépôt F-Droid propre à Etabli |
-| Desktop    | build direct depuis le dépôt |
+Établi Atelier est **en cours de développement actif**. Il n'existe pas encore de version App Store, Google Play ou F-Droid.
+
+| Canal | Statut |
+|-------|--------|
+| Android (APK) | **Version de développement** via [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
+| App Store (iOS) | prévu — pas encore disponible |
+| Google Play | prévu — pas encore disponible |
+| F-Droid | prévu — pas encore disponible |
+| Desktop (macOS, Windows, Linux) | build depuis les sources |
 
 Détails : voir [Premiers pas](getting-started.qmd).
 

@@ -1,4 +1,4 @@
-// Copyright 2026 Raban Heller
+// Copyright 2026 R. Heller
 // SPDX-License-Identifier: Apache-2.0
 
 // Établi Atelier — kernel host bootstrap (runs INSIDE the WebView).

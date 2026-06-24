@@ -10,7 +10,7 @@ sidebar: de
 
 ## Einrichtung
 
-1. **Installieren.** App Store (iOS), Google Play oder das eigene Etabli-F-Droid-Repository (Android), oder Desktop-Build aus dem Repo.
+1. **Installieren.** Établi Atelier ist in Entwicklung. Lade den aktuellen **Entwicklungs-Build (signierte APK)** über [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) herunter und installiere ihn unter Android, oder erstelle einen Desktop-Build aus dem Repo. App Store, Google Play und F-Droid sind noch nicht verfügbar.
 2. **Öffnen.** Beim ersten Start entpackt die App die eingebetteten WebAssembly-Laufzeiten (WebR und Pyodide) in den App-Support-Ordner — einmalig, je nach Gerät einige Sekunden.
 3. **Kernel wählen.** Über die Statusleiste am oberen Bildschirmrand zwischen R und Python umschalten.
 4. **Loslegen.** Skripte schreiben, Pakete laden, Plots erzeugen — alles im Atelier-Workspace.
