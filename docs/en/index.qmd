@@ -11,7 +11,7 @@ sidebar: en
 
 Établi Atelier is a polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded WebAssembly runtime. Both kernels share a single virtual filesystem; `numpy`, `pandas`, `scipy`, `matplotlib` and `scikit-learn` come pre-bundled. Plots from base R, ggplot2 and matplotlib can be exported as PNG. No network, no account, no telemetry.
 
-![Atelier — main view on Android](../_screens/android-main.png){width=320}
+![Atelier — editor](../_screens/0.1.0/01-editor.png){width=320}
 
 ## Who benefits
 

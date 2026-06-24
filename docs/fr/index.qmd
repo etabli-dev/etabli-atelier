@@ -11,7 +11,7 @@ sidebar: fr
 
 Établi Atelier est un IDE polyglotte qui exécute R (via WebR) et Python (via Pyodide) comme noyaux commutables dans un runtime WebAssembly embarqué. Les deux noyaux partagent un même système de fichiers virtuel ; `numpy`, `pandas`, `scipy`, `matplotlib` et `scikit-learn` sont préinstallés. Les graphiques issus de base R, ggplot2 et matplotlib s'exportent en PNG. Aucun réseau, aucun compte, aucune télémétrie.
 
-![Atelier — vue principale sur Android](../_screens/android-main.png){width=320}
+![Atelier — éditeur](../_screens/0.1.0/01-editor.png){width=320}
 
 ## À qui ça s'adresse
 
