@@ -5,7 +5,7 @@ sidebar: en
 
 Établi Atelier packs two complete WebAssembly runtimes — R (via WebR) and Python (via Pyodide) — behind a single monospaced interface, with both kernels sharing one virtual filesystem. The screenshots below are real captures of the v0.1.0 development build running on an Android emulator. They walk through each part of the app as you would meet it: the Editor and its R / Python kernel toggle, the Console, the Plots gallery, package management, the Files browser, and Settings.
 
-A note on scope: Atelier v0.1.0 does not yet ship discoverable in-app sample R or Python code, so this walkthrough shows the real UI states of each screen rather than a single guided sample run (Editor → Run → Console → Plots). An in-app "Examples" gallery is planned for a follow-up; until then, the tour below reflects exactly what the app looks like on first launch.
+A note on scope: Atelier v0.1.0 now ships runnable in-app sample code — an `examples/` folder seeded into the workspace on first launch with `sample.R` and `sample.py` (see the [In-app examples](#in-app-examples-r-python) section below). This walkthrough shows the real UI states of each screen rather than a single guided sample run (Editor → Run → Console → Plots); the tour below reflects exactly what the app looks like on first launch.
 
 ## Editor and the R / Python kernel toggle
 
@@ -42,6 +42,18 @@ The Files browser opens the shared virtual filesystem that both kernels see. Fro
 Settings covers the app's appearance and runtime preferences: theme (light / dark / system) along with editor and runtime options. This is also where you tune the working environment to taste before a session.
 
 ![Settings — theme and editor / runtime preferences](../_screens/0.1.0/06-settings.png){width=320}
+
+## In-app examples (R & Python)
+
+On first launch the app seeds an `examples/` folder into the workspace, holding two runnable scripts — `sample.R` (R) and `sample.py` (Python, using `numpy` and `matplotlib`). Both plot a histogram, so each one exercises a console output and a generated plot. You open either file from the Files tab and press **Run**: the script executes on the bundled WebR / Pyodide runtimes entirely offline, with no network and no extra packages to fetch. For `sample.py` the kernel toggle is set to **Python**.
+
+![Files — the `examples/` folder with `sample.R` and `sample.py`](../_screens/0.1.0/07-files-examples.png){width=320}
+
+![Editor — `sample.R` open and ready to Run](../_screens/0.1.0/08-editor-sample-r.png){width=320}
+
+![Editor — `sample.py` open with the Python kernel selected](../_screens/0.1.0/08b-editor-sample-py.png){width=320}
+
+An honest note: live execution requires the WebR / Pyodide kernel to finish booting, which takes a few seconds on a real device. The figures above show the bundled samples available in the workspace and open in the editor, ready to run.
 
 ## Where to get it
 

@@ -5,7 +5,7 @@ sidebar: de
 
 Établi Atelier vereint zwei vollständige WebAssembly-Laufzeiten — R (via WebR) und Python (via Pyodide) — hinter einer einheitlichen, monospaced Oberfläche, wobei sich beide Kernel ein gemeinsames virtuelles Dateisystem teilen. Die folgenden Screenshots sind echte Aufnahmen des Entwicklungs-Builds v0.1.0 auf einem Android-Emulator. Sie führen durch jeden Teil der App in der Reihenfolge, in der man ihm begegnet: den Editor und seinen R-/Python-Kernel-Umschalter, die Console, die Plot-Galerie, die Paketverwaltung, den Datei-Browser und die Einstellungen.
 
-Ein Hinweis zum Umfang: Atelier v0.1.0 liefert noch keinen auffindbaren, in der App integrierten R- oder Python-Beispielcode. Diese Übersicht zeigt daher die realen UI-Zustände der einzelnen Bildschirme statt eines einzelnen geführten Beispiellaufs (Editor → Ausführen → Console → Plots). Eine integrierte „Beispiele"-Galerie ist für eine spätere Version geplant; bis dahin gibt der folgende Rundgang exakt wieder, wie die App beim ersten Start aussieht.
+Ein Hinweis zum Umfang: Atelier v0.1.0 liefert nun ausführbaren, in der App integrierten Beispielcode — einen `examples/`-Ordner, der beim ersten Start in den Workspace eingespielt wird und `sample.R` sowie `sample.py` enthält (siehe Abschnitt [Mitgelieferte Beispiele](#mitgelieferte-beispiele-r-und-python) weiter unten). Diese Übersicht zeigt die realen UI-Zustände der einzelnen Bildschirme statt eines einzelnen geführten Beispiellaufs (Editor → Ausführen → Console → Plots); der folgende Rundgang gibt exakt wieder, wie die App beim ersten Start aussieht.
 
 ## Editor und der R-/Python-Kernel-Umschalter
 
@@ -42,6 +42,18 @@ Der Datei-Browser öffnet das gemeinsame virtuelle Dateisystem, das beide Kernel
 Die Einstellungen umfassen Erscheinungsbild und Laufzeitvorlieben der App: Theme (hell / dunkel / System) sowie Editor- und Runtime-Optionen. Hier wird die Arbeitsumgebung vor einer Sitzung nach Bedarf angepasst.
 
 ![Settings — Theme sowie Editor- und Runtime-Einstellungen](../_screens/0.1.0/06-settings.png){width=320}
+
+## Mitgelieferte Beispiele (R und Python)
+
+Beim ersten Start spielt die App einen `examples/`-Ordner in den Workspace ein, der zwei ausführbare Skripte enthält — `sample.R` (R) und `sample.py` (Python, mit `numpy` und `matplotlib`). Beide zeichnen ein Histogramm, sodass jedes eine Console-Ausgabe und einen erzeugten Plot ausübt. Sie öffnen eine der Dateien über den Files-Tab und drücken **Ausführen**: Das Skript läuft auf den vorgebündelten WebR-/Pyodide-Laufzeiten vollständig offline, ohne Netz und ohne zusätzliche Pakete nachzuladen. Für `sample.py` ist der Kernel-Umschalter auf **Python** gesetzt.
+
+![Files — der `examples/`-Ordner mit `sample.R` und `sample.py`](../_screens/0.1.0/07-files-examples.png){width=320}
+
+![Editor — `sample.R` geöffnet und bereit zum Ausführen](../_screens/0.1.0/08-editor-sample-r.png){width=320}
+
+![Editor — `sample.py` geöffnet mit ausgewähltem Python-Kernel](../_screens/0.1.0/08b-editor-sample-py.png){width=320}
+
+Ein ehrlicher Hinweis: Die Live-Ausführung setzt voraus, dass der WebR-/Pyodide-Kernel fertig hochgefahren ist, was auf einem echten Gerät einige Sekunden dauert. Die obigen Abbildungen zeigen die mitgelieferten Beispiele im Workspace und im Editor geöffnet, bereit zur Ausführung.
 
 ## Bezug
 

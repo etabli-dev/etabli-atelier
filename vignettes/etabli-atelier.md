@@ -18,9 +18,10 @@
 5. [Packages](#feature-packages)
 6. [Files](#feature-files)
 7. [Settings](#feature-settings)
-8. [Reproducing these figures](#reproducing-these-figures)
-9. [Known gaps](#known-gaps)
-10. [Version](#version)
+8. [In-app examples](#in-app-examples)
+9. [Reproducing these figures](#reproducing-these-figures)
+10. [Known gaps](#known-gaps)
+11. [Version](#version)
 
 ## Quick start
 Install `atelier-0.1.0.apk` and open it. On first launch the embedded WebR and
@@ -68,6 +69,23 @@ files both kernels see.
 
 ![Settings](assets/0.1.0/06-settings.png)
 
+## In-app examples
+On first launch the app seeds an `examples/` folder into the workspace with two
+runnable scripts — `sample.R` (R) and `sample.py` (Python, using `numpy` and
+`matplotlib`). Both plot a histogram, so each exercises a console output and a
+generated plot, running on the bundled WebR / Pyodide runtimes offline. Open
+either from **Files** and press **Run** (`sample.py` selects the Python kernel).
+
+![Files — the examples/ folder with sample.R and sample.py](assets/0.1.0/07-files-examples.png)
+
+![Editor — sample.R open and ready to Run](assets/0.1.0/08-editor-sample-r.png)
+
+![Editor — sample.py open with the Python kernel selected](assets/0.1.0/08b-editor-sample-py.png)
+
+Live execution requires the WebR / Pyodide kernel to finish booting (a few
+seconds on a real device); the figures show the bundled samples available in the
+workspace and open in the editor.
+
 ## Reproducing these figures
 ```bash
 flutter pub get
@@ -80,12 +98,12 @@ map 1:1 to the filenames above. The harness allows extra settle time for the WAS
 runtimes to unpack on first launch.
 
 ## Known gaps
-- **Bundled samples (capstone §2.5):** Atelier does **not** yet ship discoverable
-  in-app sample R/Python code, so the figures above show the real UI states rather
-  than a guided sample-run (Editor → Run → Console/Plots). Adding an in-app
-  "Examples" gallery (a prefilled scratch file + a couple of runnable scripts)
-  would let the harness capture a live execution deterministically. Documented
-  here rather than faked; planned for a follow-up.
+- **Bundled samples (capstone §2.5):** *Closed.* Atelier now ships
+  `examples/sample.R` + `examples/sample.py`, seeded into the workspace on first
+  launch (see [In-app examples](#in-app-examples)). Both are runnable on the
+  bundled WebR / Pyodide runtimes offline. The walkthrough figures still show the
+  real UI states rather than a single fully-rendered sample-run, since live
+  execution depends on the kernel finishing its boot (a few seconds on device).
 
 ## Version
 Documents établi **Atelier v0.1.0** (applicationId `com.raban.etabli.atelier`).

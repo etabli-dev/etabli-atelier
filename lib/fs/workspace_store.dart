@@ -42,11 +42,50 @@ class WorkspaceStore {
   static Future<WorkspaceStore> open() async {
     final Directory docs = await getApplicationDocumentsDirectory();
     final Directory root = Directory(p.join(docs.path, 'workspace'));
-    if (!await root.exists()) {
+    final bool fresh = !await root.exists();
+    if (fresh) {
       await root.create(recursive: true);
     }
-    return WorkspaceStore._(root);
+    final WorkspaceStore store = WorkspaceStore._(root);
+    if (fresh) {
+      await store._seedExamples();
+    }
+    return store;
   }
+
+  /// On first launch, drop runnable example scripts under `examples/` so the
+  /// IDE ships with sample R and Python code to Run out of the box. Both
+  /// exercise console output and a plot, on the bundled WebR / Pyodide
+  /// runtimes with no network.
+  Future<void> _seedExamples() async {
+    await writeText('examples/sample.R', _sampleR);
+    await writeText('examples/sample.py', _samplePy);
+  }
+
+  static const String _sampleR = '''# Sample R — runs on the bundled WebR runtime (no network needed).
+# Switch the kernel to R, then press Run. Text goes to Console, the plot to Plots.
+
+x <- rnorm(200)
+cat("n:", length(x), " mean:", round(mean(x), 3), " sd:", round(sd(x), 3), "\\n")
+
+hist(x, breaks = 20, col = "#28A745", border = "white",
+     main = "200 draws from N(0, 1)", xlab = "value")
+''';
+
+  static const String _samplePy = '''# Sample Python — runs on the bundled Pyodide runtime (no network needed).
+# Switch the kernel to Python, then press Run. Text goes to Console, the plot to Plots.
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.random.randn(200)
+print("n:", x.size, " mean:", round(float(x.mean()), 3), " sd:", round(float(x.std()), 3))
+
+plt.hist(x, bins=20, color="#28A745", edgecolor="white")
+plt.title("200 draws from N(0, 1)")
+plt.xlabel("value")
+plt.show()
+''';
 
   String _abs(String rel) => p.normalize(p.join(root.path, _toNative(rel)));
   static String _toNative(String posixRel) =>

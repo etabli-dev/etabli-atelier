@@ -5,7 +5,7 @@ sidebar: fr
 
 Établi Atelier réunit deux runtimes WebAssembly complets — R (via WebR) et Python (via Pyodide) — derrière une interface monospaced unique, les deux noyaux partageant un même système de fichiers virtuel. Les captures ci-dessous proviennent réellement de la version de développement v0.1.0 exécutée sur un émulateur Android. Elles parcourent chaque partie de l'application telle que vous la rencontrez : l'Éditeur et son sélecteur de noyau R / Python, la Console, la galerie de graphiques, la gestion des paquets, le navigateur de fichiers et les Réglages.
 
-Une remarque sur le périmètre : Atelier v0.1.0 ne fournit pas encore de code d'exemple R ou Python intégré et repérable dans l'app. Cette présentation montre donc les états réels de chaque écran plutôt qu'une exécution guidée unique (Éditeur → Exécuter → Console → Graphiques). Une galerie d'« Exemples » intégrée est prévue pour une prochaine version ; en attendant, le parcours ci-dessous reflète exactement l'aspect de l'application au premier lancement.
+Une remarque sur le périmètre : Atelier v0.1.0 fournit désormais du code d'exemple exécutable intégré — un dossier `examples/` déposé dans l'espace de travail au premier lancement, contenant `sample.R` et `sample.py` (voir la section [Exemples intégrés](#exemples-intégrés-r-et-python) ci-dessous). Cette présentation montre les états réels de chaque écran plutôt qu'une exécution guidée unique (Éditeur → Exécuter → Console → Graphiques) ; le parcours ci-dessous reflète exactement l'aspect de l'application au premier lancement.
 
 ## Éditeur et sélecteur de noyau R / Python
 
@@ -42,6 +42,18 @@ Le navigateur de fichiers ouvre le système de fichiers virtuel partagé que voi
 Les Réglages couvrent l'apparence de l'application et les préférences d'exécution : thème (clair / sombre / système) ainsi que les options de l'éditeur et du runtime. C'est aussi là que vous ajustez l'environnement de travail à votre goût avant une session.
 
 ![Réglages — thème et préférences de l'éditeur et du runtime](../_screens/0.1.0/06-settings.png){width=320}
+
+## Exemples intégrés (R et Python)
+
+Au premier lancement, l'application dépose un dossier `examples/` dans l'espace de travail, contenant deux scripts exécutables — `sample.R` (R) et `sample.py` (Python, utilisant `numpy` et `matplotlib`). Tous deux tracent un histogramme : chacun exerce ainsi une sortie console et un graphique généré. Vous ouvrez l'un ou l'autre fichier depuis l'onglet Fichiers et appuyez sur **Exécuter** : le script s'exécute sur les runtimes WebR / Pyodide préinstallés, entièrement hors ligne, sans réseau ni paquet supplémentaire à récupérer. Pour `sample.py`, le sélecteur de noyau est réglé sur **Python**.
+
+![Fichiers — le dossier `examples/` avec `sample.R` et `sample.py`](../_screens/0.1.0/07-files-examples.png){width=320}
+
+![Éditeur — `sample.R` ouvert et prêt à exécuter](../_screens/0.1.0/08-editor-sample-r.png){width=320}
+
+![Éditeur — `sample.py` ouvert avec le noyau Python sélectionné](../_screens/0.1.0/08b-editor-sample-py.png){width=320}
+
+Une remarque honnête : l'exécution en direct nécessite que le noyau WebR / Pyodide ait fini de démarrer, ce qui prend quelques secondes sur un appareil réel. Les figures ci-dessus montrent les exemples intégrés présents dans l'espace de travail et ouverts dans l'éditeur, prêts à être exécutés.
 
 ## Où l'obtenir
 
