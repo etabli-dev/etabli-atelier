@@ -3,27 +3,10 @@ title: "Erste Schritte"
 sidebar: de
 ---
 
-## Voraussetzungen
+R und Python lokal mit gemeinsamem Arbeitsbereich, Konsole und Grafiken ausführen. Zusätzliche Pakete und importierter Code können Netzwerkzugriff benötigen.
 
-- Ein Gerät mit iOS, Android oder Desktop (macOS, Linux, Windows).
-- Kein Server, kein Konto, keine Anmeldung — die Laufzeiten leben lokal.
+Diese Seite beschreibt den Quellstand vom Oktober 2026. Die Änderungen im Quellcode sind nicht Teil der Downloads älterer Entwicklungsreleases. Lokale Prüfungen ersetzen keine Geräte-, Live-Server- oder Store-Abnahme.
 
-## Einrichtung
+[Aktueller Funktionsumfang, Voraussetzungen und Befehle (Englisch)](../current-status.qmd)
 
-1. **Installieren.** Établi Atelier ist in Entwicklung. Lade den aktuellen **Entwicklungs-Build (signierte APK)** über [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) herunter und installiere ihn unter Android, oder erstelle einen Desktop-Build aus dem Repo. App Store, Google Play und F-Droid sind noch nicht verfügbar.
-2. **Öffnen.** Beim ersten Start entpackt die App die eingebetteten WebAssembly-Laufzeiten (WebR und Pyodide) in den App-Support-Ordner — einmalig, je nach Gerät einige Sekunden.
-3. **Kernel wählen.** Über die Statusleiste am oberen Bildschirmrand zwischen R und Python umschalten.
-4. **Loslegen.** Skripte schreiben, Pakete laden, Plots erzeugen — alles im Atelier-Workspace.
-
-## Typischer Ablauf
-
-1. Im **Files**-Tab eine neue `.R` oder `.py` Datei anlegen (oder eine bestehende öffnen).
-2. Im **Editor**-Tab Code eingeben, **Ausführen** drücken.
-3. Ergebnis (Text, Tabelle, Plot) erscheint im **Console**-Tab; Plots zusätzlich im **Plots**-Tab.
-4. Über das Teilen-Menü Plot als PNG, Skript als Datei exportieren.
-
-## Hinweise
-
-- Beide Kernel teilen das selbe virtuelle Dateisystem — eine in R geschriebene CSV liest Python ohne Umweg.
-- WebR und Pyodide sind quelloffene WebAssembly-Distributionen, vorgebündelt für reproduzierbare Builds. Versionen und Quell-URLs siehe `THIRD_PARTY.md` im Repo.
-- Der erste Start mit Pyodide kann durch das Initialisieren der wissenschaftlichen Bibliotheken etwas länger dauern; nachfolgende Starts laufen aus dem Cache.
+[README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-atelier)

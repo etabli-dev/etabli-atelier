@@ -61,8 +61,10 @@ class WorkspaceController extends ChangeNotifier {
     await refresh();
   }
 
-  Future<void> importFiles(List<String> sourcePaths,
-      {String destDirRel = ''}) async {
+  Future<void> importFiles(
+    List<String> sourcePaths, {
+    String destDirRel = '',
+  }) async {
     for (final String src in sourcePaths) {
       await _store.importFile(src, destDirRel: destDirRel);
     }
@@ -70,8 +72,10 @@ class WorkspaceController extends ChangeNotifier {
   }
 
   /// Folders only — used as move/import targets.
-  List<String> folderTargets() =>
-      ['', ..._entries.where((e) => e.isDir).map((e) => e.relPath)];
+  List<String> folderTargets() => [
+    '',
+    ..._entries.where((e) => e.isDir).map((e) => e.relPath),
+  ];
 
   // --- Kernel sync --------------------------------------------------------
   Future<void> pushToKernel(KernelLanguage lang) async {
@@ -94,8 +98,7 @@ class WorkspaceController extends ChangeNotifier {
     if (_kernel.stateFor(lang) != KernelState.ready) return;
     _setSyncing(true);
     try {
-      final List<Map<String, String>> files =
-          await _kernel.snapshotFiles(lang);
+      final List<Map<String, String>> files = await _kernel.snapshotFiles(lang);
       for (final Map<String, String> f in files) {
         final String path = f['path'] ?? '';
         if (path.isEmpty) continue;

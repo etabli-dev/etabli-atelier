@@ -50,3 +50,11 @@ fastlane/Appfile
 # The fetched runtimes are reproduced at build time from pinned upstream URLs,
 # so they should NOT be committed. Uncomment if you vendor them locally instead:
 # assets/runtimes/
+
+# Reproducible inputs and receipts from tool/fetch_runtimes.sh
+/tool/runtimes.prepared.json
+/assets/runtimes/**
+!/assets/runtimes/**/
+!/assets/runtimes/**/.gitkeep
+/tool/node_modules/
+/tool/test-results/

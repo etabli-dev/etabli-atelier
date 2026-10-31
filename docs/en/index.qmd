@@ -3,48 +3,10 @@ title: "Établi Atelier"
 sidebar: en
 ---
 
-<img src="../_icons/icon-atelier.svg" alt="" width="80" align="right" style="margin:0 0 1rem 1rem;">
+Run R and Python locally with a shared workspace, console and plots. Bundled examples run offline; extra packages and imported code may use the network.
 
-<span class="etabli-badge">Flagship runtime</span>
+This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
 
-> Run R and Python on your phone, fully offline.
+[Current implementation, prerequisites and commands](../current-status.qmd)
 
-Établi Atelier is a polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded WebAssembly runtime. Both kernels share a single virtual filesystem; `numpy`, `pandas`, `scipy`, `matplotlib` and `scikit-learn` come pre-bundled. Plots from base R, ggplot2 and matplotlib can be exported as PNG. No network, no account, no telemetry.
-
-![Atelier — editor](../_screens/0.1.0/01-editor.png){width=320}
-
-## Who benefits
-
-Researchers, students and practitioners who write, review or demonstrate statistical and data-science code on the go — in the field, in classrooms without lab machines, or in environments with no internet at all.
-
-## Platforms
-
-| Platform | Status |
-|----------|--------|
-| iOS      | ✓      |
-| Android  | ✓      |
-| macOS    | ✓      |
-| Linux    | ✓      |
-| Windows  | ✓      |
-
-## Privacy
-
-No analytics, no third-party SDKs. The app runs fully offline; neither code nor data leaves the device. There are no accounts, no telemetry, no implicit network requests.
-
-## Installation
-
-Établi Atelier is **under active development**. There are no App Store, Google Play or F-Droid releases yet.
-
-| Channel | Status |
-|---------|--------|
-| Android (APK) | **Development build** via [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
-| App Store (iOS) | planned — not yet available |
-| Google Play | planned — not yet available |
-| F-Droid | planned — not yet available |
-| Desktop (macOS, Windows, Linux) | build from source |
-
-Details: see [Getting Started](getting-started.qmd).
-
-## Support
-
-If you find the app useful: [Liberapay](https://liberapay.com/rabanheller/).
+[README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-atelier)

@@ -63,8 +63,8 @@ class SettingsScreen extends ConsumerWidget {
                 value: fontSize,
                 min: FontSizeController.min,
                 max: FontSizeController.max,
-                divisions:
-                    (FontSizeController.max - FontSizeController.min).round(),
+                divisions: (FontSizeController.max - FontSizeController.min)
+                    .round(),
                 label: '${fontSize.toStringAsFixed(0)} pt',
                 onChanged: (v) => ref.read(fontSizeProvider.notifier).set(v),
               ),
@@ -96,7 +96,9 @@ class SettingsScreen extends ConsumerWidget {
                 segments: const [
                   ButtonSegment(value: KernelLanguage.r, label: Text('R')),
                   ButtonSegment(
-                      value: KernelLanguage.python, label: Text('Python')),
+                    value: KernelLanguage.python,
+                    label: Text('Python'),
+                  ),
                 ],
                 selected: {defaultKernel},
                 onSelectionChanged: (sel) async {
@@ -124,6 +126,10 @@ class SettingsScreen extends ConsumerWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               Text('com.raban.etabli.atelier · v1.0.0', style: t.bodySmall),
+              TextButton(
+                onPressed: () => showLicensePage(context: context),
+                child: const Text('Open-source licenses'),
+              ),
             ],
           ),
         ),

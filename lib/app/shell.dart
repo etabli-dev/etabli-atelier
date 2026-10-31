@@ -28,9 +28,21 @@ final List<_Destination> _destinations = <_Destination>[
   _Destination('Files', Icons.folder_outlined, (_) => const FilesScreen()),
   _Destination('Editor', Icons.code, (_) => const EditorScreen()),
   _Destination('Console', Icons.terminal, (_) => const ConsoleScreen()),
-  _Destination('Plots', Icons.insert_chart_outlined, (_) => const PlotsScreen()),
-  _Destination('Packages', Icons.widgets_outlined, (_) => const PackagesScreen()),
-  _Destination('Settings', Icons.settings_outlined, (_) => const SettingsScreen()),
+  _Destination(
+    'Plots',
+    Icons.insert_chart_outlined,
+    (_) => const PlotsScreen(),
+  ),
+  _Destination(
+    'Packages',
+    Icons.widgets_outlined,
+    (_) => const PackagesScreen(),
+  ),
+  _Destination(
+    'Settings',
+    Icons.settings_outlined,
+    (_) => const SettingsScreen(),
+  ),
 ];
 
 class AppShell extends ConsumerWidget {
@@ -51,15 +63,34 @@ class AppShell extends ConsumerWidget {
         children: [
           _TopBar(title: dest.label),
           const Divider(height: 1),
-          Expanded(child: dest.builder(context)),
+          // Retain editor and console drafts when visiting another pane.
+          // In particular, the file browser must not dispose the editor before
+          // it can ask how to handle unsaved changes to a different file.
+          Expanded(
+            child: IndexedStack(
+              index: index,
+              children: [
+                for (var i = 0; i < _destinations.length; i++)
+                  ExcludeFocus(
+                    excluding: i != index,
+                    child: TickerMode(
+                      enabled: i == index,
+                      child: _destinations[i].builder(context),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );
 
-    if (wide) {
-      return Scaffold(
-        body: Row(
-          children: [
+    return Scaffold(
+      // Keep the workspace under the same keyed ancestry across the responsive
+      // breakpoint, so rotating the device does not recreate its editor state.
+      body: Row(
+        children: [
+          if (wide)
             NavigationRail(
               selectedIndex: index,
               onDestinationSelected: select,
@@ -72,23 +103,20 @@ class AppShell extends ConsumerWidget {
                   ),
               ],
             ),
-            const VerticalDivider(width: 1),
-            Expanded(child: body),
-          ],
-        ),
-      );
-    }
-
-    return Scaffold(
-      body: body,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: index,
-        onDestinationSelected: select,
-        destinations: [
-          for (final d in _destinations)
-            NavigationDestination(icon: Icon(d.icon), label: d.label),
+          if (wide) const VerticalDivider(width: 1),
+          Expanded(key: const ValueKey('workspace'), child: body),
         ],
       ),
+      bottomNavigationBar: wide
+          ? null
+          : NavigationBar(
+              selectedIndex: index,
+              onDestinationSelected: select,
+              destinations: [
+                for (final d in _destinations)
+                  NavigationDestination(icon: Icon(d.icon), label: d.label),
+              ],
+            ),
     );
   }
 }

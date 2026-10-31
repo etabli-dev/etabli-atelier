@@ -221,11 +221,9 @@ function dirOf(path) {
 }
 
 // ---- WebR FS helpers (async; FS lives in the worker) ----
-// WebR's FS.lookupPath returns an Emscripten FSNode whose folder-ness is
-// readable as a flag on some versions and a getter on others; on the WebR
-// release we bundle, neither `isFolder` nor `isDirectory` is reliably exposed.
-// Use the POSIX file-mode bits instead (S_IFMT mask, S_IFDIR value) — that
-// surface IS stable on Emscripten and what FS.isDir uses internally.
+// WebR 0.6.0 returns the FSNode itself from lookupPath (not { node }).
+// Its public FS API has no stat/readdir methods. Use the node's mode and
+// contents; do not hide unsupported API calls as an empty workspace.
 const S_IFMT = 0o170000;
 const S_IFDIR = 0o040000;
 function isDirMode(mode) {
@@ -233,22 +231,13 @@ function isDirMode(mode) {
 }
 async function rIsDir(path) {
   try {
-    const st = await rConsole.webR.FS.stat(path);
+    const st = await rConsole.webR.FS.lookupPath(path);
     return isDirMode(st && st.mode);
   } catch (_) { return false; }
 }
 async function rReaddir(path) {
-  // Prefer FS.readdir if exposed; otherwise fall back to the node's contents.
-  try {
-    const r = await rConsole.webR.FS.readdir(path);
-    if (Array.isArray(r)) {
-      return r.filter((n) => n !== '.' && n !== '..');
-    }
-  } catch (_) {}
-  try {
-    const node = (await rConsole.webR.FS.lookupPath(path)).node;
-    return Object.keys(node.contents || {});
-  } catch (_) { return []; }
+  const node = await rConsole.webR.FS.lookupPath(path);
+  return Object.keys(node.contents || {}).filter((n) => n !== '.' && n !== '..');
 }
 async function rMkdirp(dir) {
   const parts = dir.split('/').filter(Boolean);

@@ -1,29 +1,12 @@
 ---
-title: "Getting Started"
+title: "Getting started"
 sidebar: en
 ---
 
-## Requirements
+Run R and Python locally with a shared workspace, console and plots. Bundled examples run offline; extra packages and imported code may use the network.
 
-- An iOS, Android or desktop device (macOS, Linux, Windows).
-- No server, no account, no sign-in — the runtimes live locally.
+This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
 
-## Setup
+[Current implementation, prerequisites and commands](../current-status.qmd)
 
-1. **Install.** Établi Atelier is under development. Download the current **development build (signed APK)** from [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) and install it on Android, or build for desktop from the repo. App Store, Google Play and F-Droid releases are not available yet.
-2. **Open.** On first launch the app unpacks the bundled WebAssembly runtimes (WebR and Pyodide) into the app-support directory — a one-off, a few seconds depending on device.
-3. **Pick a kernel.** Use the toggle at the top of the screen to switch between R and Python.
-4. **Start working.** Write scripts, load packages, render plots — all inside the Atelier workspace.
-
-## A typical session
-
-1. In **Files**, create a new `.R` or `.py` file (or open an existing one).
-2. In **Editor**, type code and press **Run**.
-3. Output (text, table, plot) appears in **Console**; plots also land in **Plots**.
-4. Use the share sheet to export a plot as PNG, or the script as a file.
-
-## Notes
-
-- Both kernels share the same virtual filesystem — a CSV written from R is read by Python without any conversion step.
-- WebR and Pyodide are open-source WebAssembly distributions, vendored for reproducible builds. Versions and source URLs are documented in `THIRD_PARTY.md` in the repo.
-- The first Python launch can take a bit longer while the scientific libraries initialise; subsequent launches load from cache.
+[README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-atelier)

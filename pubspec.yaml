@@ -82,13 +82,16 @@ flutter:
   # explicitly because Flutter asset globs are non-recursive. The InAppLocalhost
   # server serves these over http://localhost via rootBundle.
   assets:
+    - assets/licenses/
     - assets/web/
     - assets/runtimes/pyodide/
+    - assets/runtimes/pyodide/fonts/
     - assets/runtimes/webr/
     - assets/runtimes/webr/assets/
     - assets/runtimes/webr/vfs/
     - assets/runtimes/webr/vfs/etc/
     - assets/runtimes/webr/vfs/etc/fonts/
+    - assets/runtimes/webr/vfs/etc/fonts/conf.d/
     - assets/runtimes/webr/vfs/etc/ssl/
     - assets/runtimes/webr/vfs/usr/
     - assets/runtimes/webr/vfs/usr/lib/

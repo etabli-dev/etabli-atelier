@@ -22,11 +22,12 @@ Repo: https://github.com/etabli-dev/etabli-atelier.git
 Builds:
   - versionName: "1.0"
     versionCode: 100002        # arm64-v8a (primary). v7a=100001, x86_64=100004
+    disable: Pending approved release tag, version codes and reviewed runtime source-build recipe
     commit: v1.0
     subdir: .                  # pubspec.yaml is at repo root
     submodules: true
     srclibs:
-      - flutter@stable
+      - flutter@c197ca5199e9ee5661e865596c9c07294dfab51c
     output: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
     rm:
       - ios
@@ -44,8 +45,6 @@ Builds:
       - assets/runtimes
     prebuild:
       # pin Flutter to the version pinned in CI, into the flutter srclib
-      - flutterVersion=$(sed -n -E "s/.*flutter-version:\ '(.*)'/\1/p" .github/workflows/release.yml)
-      - '[[ $flutterVersion ]] && git -C $$flutter$$ checkout -f $flutterVersion || true'
       # fetch vendored runtimes from upstream open-source releases (provenance, not blobs)
       - bash tool/fetch_runtimes.sh
       # scan dart packages
@@ -53,7 +52,7 @@ Builds:
       - $$flutter$$/bin/flutter config --no-analytics
       - $$flutter$$/bin/flutter pub get
 
-AutoUpdateMode: Version v%v
-UpdateCheckMode: Tags
+AutoUpdateMode: None
+UpdateCheckMode: None
 CurrentVersion: "1.0"
 CurrentVersionCode: 100002

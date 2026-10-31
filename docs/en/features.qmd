@@ -3,60 +3,28 @@ title: "Features"
 sidebar: en
 ---
 
-Établi Atelier packs two complete WebAssembly runtimes — R (via WebR) and Python (via Pyodide) — behind a single monospaced interface, with both kernels sharing one virtual filesystem. The screenshots below are real captures of the v0.1.0 development build running on an Android emulator. They walk through each part of the app as you would meet it: the Editor and its R / Python kernel toggle, the Console, the Plots gallery, package management, the Files browser, and Settings.
+Run R and Python locally with a shared workspace, console and plots. Bundled examples run offline; extra packages and imported code may use the network.
 
-A note on scope: Atelier v0.1.0 now ships runnable in-app sample code — an `examples/` folder seeded into the workspace on first launch with `sample.R` and `sample.py` (see the [In-app examples](#in-app-examples-r-python) section below). This walkthrough shows the real UI states of each screen rather than a single guided sample run (Editor → Run → Console → Plots); the tour below reflects exactly what the app looks like on first launch.
+This page describes the October 2026 source revision. These changes are unpublished and are not part of older development releases. Local checks are distinct from device, live-service and store acceptance.
 
-## Editor and the R / Python kernel toggle
+[Current status / Aktueller Stand / État actuel](../current-status.qmd)
 
-The Editor is where you land on first launch — a code editor over a scratch buffer, with a **Run** action and an **R / Python** kernel toggle in the top bar. Flipping the toggle switches which interpreter executes your code, while both kernels keep sharing one virtual filesystem, so a file written from R is readable from Python without conversion. On a fresh start the buffer is empty and the kernel is set to **R**.
+Historical screenshots from v0.1.0; these are not verification of the current revision.
 
 ![Editor — scratch buffer with the R kernel selected](../_screens/0.1.0/01-editor.png){width=320}
 
-## Console
-
-The Console hosts the live kernel session. You start the session, then run code from the Editor and watch the text output appear here. The output panel header tracks the active kernel, reading `Output · R` or `Output · Python` depending on the toggle, so you always know which interpreter produced what you are looking at.
-
 ![Console — live kernel session and text output](../_screens/0.1.0/02-console.png){width=320}
-
-## Plots
-
-Graphics rendered by base R (`plot(...)`), ggplot2 or matplotlib appear in the Plots tab. Each plot is collected into the gallery and can be exported to PNG, so you can save or share a figure straight from the device without a desktop in the loop.
 
 ![Plots — gallery of generated figures, exportable as PNG](../_screens/0.1.0/03-plots.png){width=320}
 
-## Packages
-
-The Packages screen installs additional libraries beyond the pre-bundled set: R packages from `repo.r-wasm.org` (WebR WASM binaries) or Python packages via Pyodide. The bundled libraries — `numpy`, `pandas`, `scipy`, `matplotlib`, `scikit-learn` for Python, and base R's standard set — already work fully offline. Installing anything extra is the one deliberate action that reaches the network, and it needs a connection plus a running kernel.
-
 ![Packages — install more libraries from the WebR package source](../_screens/0.1.0/04-packages.png){width=320}
-
-## Files
-
-The Files browser opens the shared virtual filesystem that both kernels see. From here you create, open and manage files in the workspace; because R and Python share the same `/workspace` path, anything you write from one kernel is immediately visible to the other.
 
 ![Files — browse and manage the shared virtual filesystem](../_screens/0.1.0/05-files.png){width=320}
 
-## Settings
-
-Settings covers the app's appearance and runtime preferences: theme (light / dark / system) along with editor and runtime options. This is also where you tune the working environment to taste before a session.
-
 ![Settings — theme and editor / runtime preferences](../_screens/0.1.0/06-settings.png){width=320}
-
-## In-app examples (R & Python)
-
-On first launch the app seeds an `examples/` folder into the workspace, holding two runnable scripts — `sample.R` (R) and `sample.py` (Python, using `numpy` and `matplotlib`). Both plot a histogram, so each one exercises a console output and a generated plot. You open either file from the Files tab and press **Run**: the script executes on the bundled WebR / Pyodide runtimes entirely offline, with no network and no extra packages to fetch. For `sample.py` the kernel toggle is set to **Python**.
 
 ![Files — the `examples/` folder with `sample.R` and `sample.py`](../_screens/0.1.0/07-files-examples.png){width=320}
 
 ![Editor — `sample.R` open and ready to Run](../_screens/0.1.0/08-editor-sample-r.png){width=320}
 
 ![Editor — `sample.py` open with the Python kernel selected](../_screens/0.1.0/08b-editor-sample-py.png){width=320}
-
-An honest note: live execution requires the WebR / Pyodide kernel to finish booting, which takes a few seconds on a real device. The figures above show the bundled samples available in the workspace and open in the editor, ready to run.
-
-## Where to get it
-
-Atelier v0.1.0 is an **Android-only development build** distributed as a signed APK via [GitHub Releases (v0.1.0)](https://github.com/etabli-dev/etabli-atelier/releases/tag/v0.1.0).
-
-App Store, Google Play and F-Droid releases are planned but **not yet available**.

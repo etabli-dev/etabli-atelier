@@ -3,60 +3,28 @@ title: "Funktionen"
 sidebar: de
 ---
 
-Établi Atelier vereint zwei vollständige WebAssembly-Laufzeiten — R (via WebR) und Python (via Pyodide) — hinter einer einheitlichen, monospaced Oberfläche, wobei sich beide Kernel ein gemeinsames virtuelles Dateisystem teilen. Die folgenden Screenshots sind echte Aufnahmen des Entwicklungs-Builds v0.1.0 auf einem Android-Emulator. Sie führen durch jeden Teil der App in der Reihenfolge, in der man ihm begegnet: den Editor und seinen R-/Python-Kernel-Umschalter, die Console, die Plot-Galerie, die Paketverwaltung, den Datei-Browser und die Einstellungen.
+R und Python lokal mit gemeinsamem Arbeitsbereich, Konsole und Grafiken ausführen. Zusätzliche Pakete und importierter Code können Netzwerkzugriff benötigen.
 
-Ein Hinweis zum Umfang: Atelier v0.1.0 liefert nun ausführbaren, in der App integrierten Beispielcode — einen `examples/`-Ordner, der beim ersten Start in den Workspace eingespielt wird und `sample.R` sowie `sample.py` enthält (siehe Abschnitt [Mitgelieferte Beispiele](#mitgelieferte-beispiele-r-und-python) weiter unten). Diese Übersicht zeigt die realen UI-Zustände der einzelnen Bildschirme statt eines einzelnen geführten Beispiellaufs (Editor → Ausführen → Console → Plots); der folgende Rundgang gibt exakt wieder, wie die App beim ersten Start aussieht.
+Diese Seite beschreibt den Quellstand vom Oktober 2026. Die Änderungen sind unveröffentlicht und nicht Teil älterer Entwicklungsreleases. Lokale Prüfungen ersetzen keine Geräte-, Live-Server- oder Store-Abnahme.
 
-## Editor und der R-/Python-Kernel-Umschalter
+[Current status / Aktueller Stand / État actuel](../current-status.qmd)
 
-Der Editor ist die Startansicht beim ersten Öffnen: ein Code-Editor über einem Scratch-Puffer, mit einer **Ausführen**-Aktion und einem **R-/Python**-Kernel-Umschalter in der oberen Leiste. Das Umschalten wechselt, welcher Interpreter den Code ausführt, während beide Kernel weiterhin ein gemeinsames virtuelles Dateisystem nutzen; eine in R geschriebene Datei ist ohne Konvertierung aus Python lesbar. Beim Start ist der Puffer leer und der Kernel auf **R** gesetzt.
+Historische Bildschirmfotos aus v0.1.0; sie belegen keine Prüfung des aktuellen Quellstands.
 
 ![Editor — Scratch-Puffer mit ausgewähltem R-Kernel](../_screens/0.1.0/01-editor.png){width=320}
 
-## Console
-
-Die Console beherbergt die laufende Kernel-Sitzung. Man startet die Sitzung, führt anschließend Code aus dem Editor aus und sieht hier die Textausgabe. Die Kopfzeile des Ausgabebereichs zeigt den aktiven Kernel an — `Output · R` oder `Output · Python` je nach Umschalter —, sodass stets erkennbar ist, welcher Interpreter die angezeigte Ausgabe erzeugt hat.
-
 ![Console — laufende Kernel-Sitzung und Textausgabe](../_screens/0.1.0/02-console.png){width=320}
-
-## Plots
-
-Grafiken aus base R (`plot(...)`), ggplot2 oder matplotlib erscheinen im Plots-Tab. Jeder Plot wird in die Galerie aufgenommen und lässt sich als PNG exportieren; so kann eine Abbildung direkt vom Gerät gespeichert oder geteilt werden, ohne den Umweg über einen Desktop.
 
 ![Plots — Galerie der erzeugten Abbildungen, als PNG exportierbar](../_screens/0.1.0/03-plots.png){width=320}
 
-## Packages
-
-Der Packages-Bildschirm installiert zusätzliche Bibliotheken über den vorgebündelten Satz hinaus: R-Pakete von `repo.r-wasm.org` (WebR-WASM-Binärdateien) oder Python-Pakete via Pyodide. Die vorgebündelten Bibliotheken — `numpy`, `pandas`, `scipy`, `matplotlib`, `scikit-learn` auf Python-Seite sowie der Standardsatz von base R — arbeiten bereits vollständig offline. Das Nachinstallieren weiterer Pakete ist die einzige bewusste Aktion, die das Netz erreicht, und erfordert eine Verbindung sowie einen laufenden Kernel.
-
 ![Packages — weitere Bibliotheken aus der WebR-Paketquelle installieren](../_screens/0.1.0/04-packages.png){width=320}
-
-## Files
-
-Der Datei-Browser öffnet das gemeinsame virtuelle Dateisystem, das beide Kernel sehen. Von hier aus werden Dateien im Workspace erstellt, geöffnet und verwaltet; da R und Python denselben Pfad `/workspace` teilen, ist alles, was aus einem Kernel geschrieben wird, sofort für den anderen sichtbar.
 
 ![Files — das gemeinsame virtuelle Dateisystem durchsuchen und verwalten](../_screens/0.1.0/05-files.png){width=320}
 
-## Settings
-
-Die Einstellungen umfassen Erscheinungsbild und Laufzeitvorlieben der App: Theme (hell / dunkel / System) sowie Editor- und Runtime-Optionen. Hier wird die Arbeitsumgebung vor einer Sitzung nach Bedarf angepasst.
-
 ![Settings — Theme sowie Editor- und Runtime-Einstellungen](../_screens/0.1.0/06-settings.png){width=320}
-
-## Mitgelieferte Beispiele (R und Python)
-
-Beim ersten Start spielt die App einen `examples/`-Ordner in den Workspace ein, der zwei ausführbare Skripte enthält — `sample.R` (R) und `sample.py` (Python, mit `numpy` und `matplotlib`). Beide zeichnen ein Histogramm, sodass jedes eine Console-Ausgabe und einen erzeugten Plot ausübt. Sie öffnen eine der Dateien über den Files-Tab und drücken **Ausführen**: Das Skript läuft auf den vorgebündelten WebR-/Pyodide-Laufzeiten vollständig offline, ohne Netz und ohne zusätzliche Pakete nachzuladen. Für `sample.py` ist der Kernel-Umschalter auf **Python** gesetzt.
 
 ![Files — der `examples/`-Ordner mit `sample.R` und `sample.py`](../_screens/0.1.0/07-files-examples.png){width=320}
 
 ![Editor — `sample.R` geöffnet und bereit zum Ausführen](../_screens/0.1.0/08-editor-sample-r.png){width=320}
 
 ![Editor — `sample.py` geöffnet mit ausgewähltem Python-Kernel](../_screens/0.1.0/08b-editor-sample-py.png){width=320}
-
-Ein ehrlicher Hinweis: Die Live-Ausführung setzt voraus, dass der WebR-/Pyodide-Kernel fertig hochgefahren ist, was auf einem echten Gerät einige Sekunden dauert. Die obigen Abbildungen zeigen die mitgelieferten Beispiele im Workspace und im Editor geöffnet, bereit zur Ausführung.
-
-## Bezug
-
-Atelier v0.1.0 ist ein **ausschließlich für Android verfügbarer Entwicklungs-Build**, der als signiertes APK über [GitHub Releases (v0.1.0)](https://github.com/etabli-dev/etabli-atelier/releases/tag/v0.1.0) bereitgestellt wird.
-
-Veröffentlichungen im App Store, bei Google Play und F-Droid sind geplant, aber **noch nicht verfügbar**.

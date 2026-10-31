@@ -1,0 +1,27 @@
+---
+title: "Current implementation and first use"
+---
+
+Run R and Python locally with a shared workspace, console and plots. Bundled examples run offline; extra packages and imported code may use the network.
+
+This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
+
+## Build from a clean checkout
+
+Flutter 3.47.9 / Dart 3.13.7, Python 3, JDK 17, Android SDK 36 and build-tools 35.0.0. Set JAVA_HOME and ANDROID_HOME. A device/emulator is required to install; a full Xcode installation is needed for iOS.
+
+```sh
+python3 tool/test_fetch_runtimes.py
+bash tool/fetch_runtimes.sh
+flutter pub get --enforce-lockfile
+flutter analyze
+flutter test
+flutter build apk --debug --target-platform android-arm64
+adb install -r build/app/outputs/flutter-apk/app-debug.apk
+```
+
+These commands build from this source tree. Debug APKs are development artifacts; release bundles need private signing and device acceptance. A successful build is not a store submission.
+
+## Use and verification
+
+Read the [repository README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October refinement record](https://github.com/etabli-dev/etabli-atelier/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. See the workflow runs for the exact source commit; local verification does not establish a remote CI result.

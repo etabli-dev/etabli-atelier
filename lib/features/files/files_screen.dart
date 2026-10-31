@@ -129,16 +129,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   void _open(WorkspaceEntry e) {
     if (e.isDir) return;
     ref.read(openFileProvider.notifier).open(e.relPath);
-    final KernelLanguage? lang = _languageForName(e.name);
-    if (lang != null) ref.read(activeKernelProvider.notifier).set(lang);
     ref.read(navIndexProvider.notifier).set(NavIndexController.editor);
-  }
-
-  static KernelLanguage? _languageForName(String name) {
-    final String n = name.toLowerCase();
-    if (n.endsWith('.py')) return KernelLanguage.python;
-    if (n.endsWith('.r') || n.endsWith('.rmd')) return KernelLanguage.r;
-    return null;
   }
 
   Future<void> _guard(Future<void> Function() action) async {

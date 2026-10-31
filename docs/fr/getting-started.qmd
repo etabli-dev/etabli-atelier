@@ -3,27 +3,10 @@ title: "Premiers pas"
 sidebar: fr
 ---
 
-## Prérequis
+Exécuter R et Python localement avec un espace de travail partagé, une console et des graphiques. Les paquets supplémentaires et le code importé peuvent utiliser le réseau.
 
-- Un appareil iOS, Android ou desktop (macOS, Linux, Windows).
-- Aucun serveur, aucun compte, aucune inscription — les runtimes sont locaux.
+Cette page décrit les sources d’octobre 2026. Ces modifications ne sont pas publiées et ne figurent pas dans les anciennes versions de développement. Les contrôles locaux ne remplacent pas la validation sur appareil, serveur réel ou boutique.
 
-## Configuration
+[Fonctions actuelles, prérequis et commandes (en anglais)](../current-status.qmd)
 
-1. **Installer.** Établi Atelier est en développement. Téléchargez la **version de développement (APK signé)** depuis [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) et installez-la sur Android, ou compilez une version desktop depuis le dépôt. Les versions App Store, Google Play et F-Droid ne sont pas encore disponibles.
-2. **Ouvrir.** Au premier lancement, l'application décompresse les runtimes WebAssembly embarqués (WebR et Pyodide) dans le dossier de support — une seule fois, quelques secondes selon l'appareil.
-3. **Choisir un noyau.** Bascule en haut de l'écran pour passer entre R et Python.
-4. **Commencer.** Écrire des scripts, charger des paquets, générer des graphiques — tout dans l'espace de travail Atelier.
-
-## Une séance typique
-
-1. Dans **Files**, créer un nouveau fichier `.R` ou `.py` (ou en ouvrir un existant).
-2. Dans **Editor**, saisir du code et appuyer sur **Run**.
-3. La sortie (texte, tableau, graphique) apparaît dans **Console** ; les graphiques aussi dans **Plots**.
-4. Via la feuille de partage, exporter un graphique en PNG ou le script en fichier.
-
-## Remarques
-
-- Les deux noyaux partagent le même système de fichiers — un CSV écrit en R est lu par Python sans conversion.
-- WebR et Pyodide sont des distributions WebAssembly open source, embarquées pour des builds reproductibles. Versions et URL sources : voir `THIRD_PARTY.md` dans le dépôt.
-- Le premier lancement Python peut prendre un peu plus de temps à cause de l'initialisation des bibliothèques scientifiques ; les lancements suivants sont chargés depuis le cache.
+[README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-atelier)

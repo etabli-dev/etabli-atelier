@@ -1,0 +1,38 @@
+{
+  "application": "atelier",
+  "artifacts": [
+    {
+      "name": "webr-0.6.0.zip",
+      "url": "https://github.com/r-wasm/webr/releases/download/v0.6.0/webr-0.6.0.zip",
+      "sha256": "d476e1d6e23cd6572450e2cf3b5faf93d8bd0c0284f4f8bb7b7f8aa4cd01aaf1"
+    },
+    {
+      "name": "shinylive-0.10.12.tar.gz",
+      "url": "https://github.com/posit-dev/shinylive/releases/download/v0.10.12/shinylive-0.10.12.tar.gz",
+      "sha256": "5be0daf553f378d59382b74e360e17d2d566c8b547c61bafb8c15936395cd5f4"
+    },
+    {
+      "name": "webr-LICENSE.md",
+      "url": "https://raw.githubusercontent.com/r-wasm/webr/v0.6.0/LICENSE.md",
+      "sha256": "0ac1bff20e1329e244669e318269e6b40f327aecc78c3f18376ac59e923dde23"
+    },
+    {
+      "name": "shinylive-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/posit-dev/shinylive/v0.10.12/LICENSE",
+      "sha256": "b8e2ce166ce471c7be2aba2bd0117ba5e6923a400c4f999abccb2c28ba528b93"
+    },
+    {
+      "name": "pyodide-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/pyodide/pyodide/0.27.7/LICENSE",
+      "sha256": "1f256ecad192880510e84ad60474eab7589218784b9a50bc7ceee34c2b91f1d5"
+    }
+  ],
+  "python_packages": [
+    "numpy",
+    "pandas",
+    "scipy",
+    "matplotlib",
+    "scikit-learn",
+    "micropip"
+  ]
+}

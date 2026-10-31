@@ -9,6 +9,7 @@
 // Relative paths are kept POSIX-style ('/'-separated) because they double as
 // in-kernel paths under /workspace.
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -37,6 +38,9 @@ class WorkspaceEntry {
 class WorkspaceStore {
   WorkspaceStore._(this.root);
 
+  /// Opens an existing workspace directory (also used by filesystem tests).
+  WorkspaceStore.at(this.root);
+
   final Directory root;
 
   static Future<WorkspaceStore> open() async {
@@ -62,7 +66,8 @@ class WorkspaceStore {
     await writeText('examples/sample.py', _samplePy);
   }
 
-  static const String _sampleR = '''# Sample R — runs on the bundled WebR runtime (no network needed).
+  static const String _sampleR =
+      '''# Sample R — runs on the bundled WebR runtime (no network needed).
 # Switch the kernel to R, then press Run. Text goes to Console, the plot to Plots.
 
 x <- rnorm(200)
@@ -72,7 +77,8 @@ hist(x, breaks = 20, col = "#28A745", border = "white",
      main = "200 draws from N(0, 1)", xlab = "value")
 ''';
 
-  static const String _samplePy = '''# Sample Python — runs on the bundled Pyodide runtime (no network needed).
+  static const String _samplePy =
+      '''# Sample Python — runs on the bundled Pyodide runtime (no network needed).
 # Switch the kernel to Python, then press Run. Text goes to Console, the plot to Plots.
 
 import numpy as np
@@ -87,7 +93,32 @@ plt.xlabel("value")
 plt.show()
 ''';
 
-  String _abs(String rel) => p.normalize(p.join(root.path, _toNative(rel)));
+  String _abs(String rel) {
+    if (rel.isEmpty ||
+        rel.contains('\\') ||
+        rel.contains('\u0000') ||
+        p.posix.isAbsolute(rel) ||
+        p.windows.isAbsolute(rel) ||
+        rel
+            .split('/')
+            .any((part) => part.isEmpty || part == '.' || part == '..')) {
+      throw ArgumentError.value(
+        rel,
+        'path',
+        'Expected a relative workspace path',
+      );
+    }
+    var current = root.path;
+    for (final part in rel.split('/')) {
+      current = p.join(current, part);
+      if (FileSystemEntity.typeSync(current, followLinks: false) ==
+          FileSystemEntityType.link) {
+        throw FileSystemException('Workspace symlinks are not supported', rel);
+      }
+    }
+    return p.normalize(p.join(root.path, _toNative(rel)));
+  }
+
   static String _toNative(String posixRel) =>
       posixRel.split('/').join(Platform.pathSeparator);
   String _toRel(String abs) =>
@@ -96,7 +127,11 @@ plt.show()
   /// All entries, recursive, folders-first then alphabetical.
   Future<List<WorkspaceEntry>> list() async {
     final List<WorkspaceEntry> out = <WorkspaceEntry>[];
-    await for (final FileSystemEntity e in root.list(recursive: true)) {
+    await for (final FileSystemEntity e in root.list(
+      recursive: true,
+      followLinks: false,
+    )) {
+      if (e is Link) continue;
       final bool isDir = e is Directory;
       int size = 0;
       if (e is File) {
@@ -104,7 +139,9 @@ plt.show()
           size = await e.length();
         } catch (_) {}
       }
-      out.add(WorkspaceEntry(relPath: _toRel(e.path), isDir: isDir, size: size));
+      out.add(
+        WorkspaceEntry(relPath: _toRel(e.path), isDir: isDir, size: size),
+      );
     }
     out.sort(_compare);
     return out;
@@ -162,11 +199,19 @@ plt.show()
   }
 
   Future<void> _movePath(String rel, String destRel) async {
+    final srcAbs = _abs(rel);
+    final destAbs = _abs(destRel);
+    if (srcAbs == destAbs) return;
+    if (p.isWithin(srcAbs, destAbs)) {
+      throw ArgumentError('Cannot move a folder into itself');
+    }
+    if (await _entityType(destAbs) != FileSystemEntityType.notFound) {
+      throw FileSystemException('Destination already exists', destRel);
+    }
     final FileSystemEntity src =
-        await _entityType(_abs(rel)) == FileSystemEntityType.directory
-            ? Directory(_abs(rel))
-            : File(_abs(rel));
-    final String destAbs = _abs(destRel);
+        await _entityType(srcAbs) == FileSystemEntityType.directory
+        ? Directory(srcAbs)
+        : File(srcAbs);
     await Directory(p.dirname(destAbs)).create(recursive: true);
     await src.rename(destAbs);
   }
@@ -186,22 +231,29 @@ plt.show()
   Future<void> writeBytes(String rel, List<int> bytes) async {
     final File f = File(_abs(rel));
     await f.parent.create(recursive: true);
-    await f.writeAsBytes(bytes, flush: true);
+    final tempDir = await f.parent.createTemp('.write-');
+    try {
+      final temporary = File(p.join(tempDir.path, 'content'));
+      await temporary.writeAsBytes(bytes, flush: true);
+      await temporary.rename(f.path);
+    } finally {
+      await tempDir.delete(recursive: true);
+    }
   }
 
   Future<String> readText(String rel) => File(_abs(rel)).readAsString();
 
-  Future<void> writeText(String rel, String text) async {
-    final File f = File(_abs(rel));
-    await f.parent.create(recursive: true);
-    await f.writeAsString(text, flush: true);
-  }
+  Future<void> writeText(String rel, String text) =>
+      writeBytes(rel, utf8.encode(text));
 
   /// Import an external file (from the device picker) into [destDirRel].
   Future<void> importFile(String sourcePath, {String destDirRel = ''}) async {
     final String name = p.basename(sourcePath);
     final String destRel = destDirRel.isEmpty ? name : '$destDirRel/$name';
     final File dest = File(_abs(destRel));
+    if (await _entityType(dest.path) != FileSystemEntityType.notFound) {
+      throw FileSystemException('Destination already exists', destRel);
+    }
     await dest.parent.create(recursive: true);
     await File(sourcePath).copy(dest.path);
   }

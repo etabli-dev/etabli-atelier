@@ -6,6 +6,7 @@
 // user-facing output is rendered natively by the Flutter shell from the events
 // this view emits. Wrapping the app keeps the kernels alive across navigation.
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,12 +27,12 @@ class _KernelHostState extends ConsumerState<KernelHost> {
   bool _serverReady = false;
 
   static final InAppWebViewSettings _settings = InAppWebViewSettings(
-    isInspectable: true,
+    isInspectable: kDebugMode,
     javaScriptEnabled: true,
     transparentBackground: true,
     mediaPlaybackRequiresUserGesture: false,
-    allowFileAccessFromFileURLs: true,
-    allowUniversalAccessFromFileURLs: true,
+    allowFileAccessFromFileURLs: false,
+    allowUniversalAccessFromFileURLs: false,
     // WebR/Pyodide spin up Web Workers; nothing here needs hardware back nav.
     supportZoom: false,
   );
@@ -51,6 +52,17 @@ class _KernelHostState extends ConsumerState<KernelHost> {
       await RuntimeServer.instance.start();
     } catch (e, st) {
       debugPrint('localhost server start failed: $e\n$st');
+      if (mounted) {
+        ref.read(kernelControllerProvider).handleEvent({
+          'type': 'status',
+          'payload': {
+            'kernel': 'host',
+            'state': 'error',
+            'message': 'Could not start the local runtime: $e',
+          },
+        });
+      }
+      return;
     }
     if (mounted) setState(() => _serverReady = true);
   }
@@ -91,7 +103,8 @@ class _KernelHostState extends ConsumerState<KernelHost> {
                           handlerName: 'onKernelEvent',
                           callback: (args) {
                             kernel.handleEvent(
-                                args.isNotEmpty ? args.first : null);
+                              args.isNotEmpty ? args.first : null,
+                            );
                           },
                         );
                       },

@@ -3,48 +3,10 @@ title: "Établi Atelier"
 sidebar: fr
 ---
 
-<img src="../_icons/icon-atelier.svg" alt="" width="80" align="right" style="margin:0 0 1rem 1rem;">
+Exécuter R et Python localement avec un espace de travail partagé, une console et des graphiques. Les paquets supplémentaires et le code importé peuvent utiliser le réseau.
 
-<span class="etabli-badge">Application phare</span>
+Cette page décrit les sources d’octobre 2026. Ces modifications ne sont pas publiées et ne figurent pas dans les anciennes versions de développement. Les contrôles locaux ne remplacent pas la validation sur appareil, serveur réel ou boutique.
 
-> R et Python sur votre téléphone, entièrement hors ligne.
+[Fonctions actuelles, prérequis et commandes (en anglais)](../current-status.qmd)
 
-Établi Atelier est un IDE polyglotte qui exécute R (via WebR) et Python (via Pyodide) comme noyaux commutables dans un runtime WebAssembly embarqué. Les deux noyaux partagent un même système de fichiers virtuel ; `numpy`, `pandas`, `scipy`, `matplotlib` et `scikit-learn` sont préinstallés. Les graphiques issus de base R, ggplot2 et matplotlib s'exportent en PNG. Aucun réseau, aucun compte, aucune télémétrie.
-
-![Atelier — éditeur](../_screens/0.1.0/01-editor.png){width=320}
-
-## À qui ça s'adresse
-
-Aux chercheuses, étudiants et praticiens qui écrivent, vérifient ou démontrent du code statistique et de science des données en mobilité — sur le terrain, en cours sans machine de labo, ou dans des environnements sans Internet.
-
-## Plateformes
-
-| Plateforme | Statut |
-|------------|--------|
-| iOS        | ✓      |
-| Android    | ✓      |
-| macOS      | ✓      |
-| Linux      | ✓      |
-| Windows    | ✓      |
-
-## Vie privée
-
-Aucun outil d'analyse, aucun SDK tiers. L'application fonctionne entièrement hors ligne ; ni le code ni les données ne quittent l'appareil. Pas de compte, pas de télémétrie, pas de requêtes réseau implicites.
-
-## Installation
-
-Établi Atelier est **en cours de développement actif**. Il n'existe pas encore de version App Store, Google Play ou F-Droid.
-
-| Canal | Statut |
-|-------|--------|
-| Android (APK) | **Version de développement** via [GitHub Releases](https://github.com/etabli-dev/etabli-atelier/releases) |
-| App Store (iOS) | prévu — pas encore disponible |
-| Google Play | prévu — pas encore disponible |
-| F-Droid | prévu — pas encore disponible |
-| Desktop (macOS, Windows, Linux) | build depuis les sources |
-
-Détails : voir [Premiers pas](getting-started.qmd).
-
-## Soutenir
-
-Si l'appli vous est utile : [Liberapay](https://liberapay.com/rabanheller/).
+[README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) · [GitHub](https://github.com/etabli-dev/etabli-atelier)

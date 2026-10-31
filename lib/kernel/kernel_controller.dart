@@ -113,7 +113,8 @@ class KernelController extends ChangeNotifier {
     // `start()` returns a Promise; ignoring its value via `void` keeps the
     // JS bridge from trying to serialize an unsupported result type.
     await _eval(
-        "void (window.EtabliKernel && window.EtabliKernel.start('${_id(lang)}'));");
+      "void (window.EtabliKernel && window.EtabliKernel.start('${_id(lang)}'));",
+    );
   }
 
   // --- Incoming events from the WebView -----------------------------------
@@ -125,11 +126,17 @@ class KernelController extends ChangeNotifier {
 
     switch (type) {
       case 'stdout':
-        if (lang != null) _add(lang, payload['text'] as String? ?? '', ConsoleStream.stdout);
+        if (lang != null) {
+          _add(lang, payload['text'] as String? ?? '', ConsoleStream.stdout);
+        }
       case 'stderr':
-        if (lang != null) _add(lang, payload['text'] as String? ?? '', ConsoleStream.stderr);
+        if (lang != null) {
+          _add(lang, payload['text'] as String? ?? '', ConsoleStream.stderr);
+        }
       case 'stdin':
-        if (lang != null) _add(lang, payload['text'] as String? ?? '', ConsoleStream.input);
+        if (lang != null) {
+          _add(lang, payload['text'] as String? ?? '', ConsoleStream.input);
+        }
       case 'prompt':
         // For R, a prompt after a submission means that submission finished.
         if (lang == KernelLanguage.r && _running.remove(KernelLanguage.r)) {
@@ -168,8 +175,13 @@ class KernelController extends ChangeNotifier {
     switch (state) {
       case 'loading':
         _state[lang] = KernelState.loading;
-        _add(lang, lang == KernelLanguage.r ? 'Starting R (WebR)…' : 'Starting Python (Pyodide)…',
-            ConsoleStream.system);
+        _add(
+          lang,
+          lang == KernelLanguage.r
+              ? 'Starting R (WebR)…'
+              : 'Starting Python (Pyodide)…',
+          ConsoleStream.system,
+        );
       case 'ready':
         _state[lang] = KernelState.ready;
         if (lang == KernelLanguage.r) {
@@ -179,8 +191,12 @@ class KernelController extends ChangeNotifier {
       case 'error':
         _state[lang] = KernelState.error;
         lastError = payload['message'] as String?;
-        _add(lang, '${lang == KernelLanguage.r ? 'R' : 'Python'} kernel error: '
-            '${lastError ?? 'unknown'}', ConsoleStream.system);
+        _add(
+          lang,
+          '${lang == KernelLanguage.r ? 'R' : 'Python'} kernel error: '
+          '${lastError ?? 'unknown'}',
+          ConsoleStream.system,
+        );
     }
     notifyListeners();
   }
@@ -190,14 +206,17 @@ class KernelController extends ChangeNotifier {
     if (_state[lang] != KernelState.ready) return;
     _running.add(lang);
     await _eval(
-        "void window.EtabliKernel.stdin('${_id(lang)}', ${jsonEncode(code)});");
+      "void window.EtabliKernel.stdin('${_id(lang)}', ${jsonEncode(code)});",
+    );
   }
 
   // --- Shared-FS sync -----------------------------------------------------
   /// Push the workspace [files] (each {path, b64}) into the kernel's
   /// /workspace, replacing what was there.
   Future<void> pushFiles(
-      KernelLanguage lang, List<Map<String, String>> files) async {
+    KernelLanguage lang,
+    List<Map<String, String>> files,
+  ) async {
     final InAppWebViewController? web = _web;
     if (web == null || _state[lang] != KernelState.ready) return;
     await web.callAsyncJavaScript(
@@ -218,10 +237,7 @@ class KernelController extends ChangeNotifier {
     if (value is! List) return const [];
     return value
         .whereType<Map>()
-        .map((m) => {
-              'path': m['path'].toString(),
-              'b64': m['b64'].toString(),
-            })
+        .map((m) => {'path': m['path'].toString(), 'b64': m['b64'].toString()})
         .toList();
   }
 
@@ -264,12 +280,12 @@ class KernelController extends ChangeNotifier {
       return;
     }
     _installing = true;
-    _pkgLog[lang]!.add(PackageResult(
-        names.join(', '), true, 'Installing… (requires network)'));
+    _pkgLog[lang]!.add(
+      PackageResult(names.join(', '), true, 'Installing… (requires network)'),
+    );
     notifyListeners();
 
-    final String fn =
-        lang == KernelLanguage.r ? 'installR' : 'installPython';
+    final String fn = lang == KernelLanguage.r ? 'installR' : 'installPython';
     try {
       final CallAsyncJavaScriptResult? res = await web.callAsyncJavaScript(
         functionBody: 'return await window.EtabliPkg.$fn(names);',
@@ -278,18 +294,21 @@ class KernelController extends ChangeNotifier {
       final Object? value = res?.value;
       if (value is Map) {
         if (value['error'] != null) {
-          _pkgLog[lang]!
-              .add(PackageResult('—', false, value['error'].toString()));
+          _pkgLog[lang]!.add(
+            PackageResult('—', false, value['error'].toString()),
+          );
         }
         final Object? results = value['results'];
         if (results is List) {
           for (final Map r in results.whereType<Map>()) {
-            _pkgLog[lang]!.add(PackageResult(
-              r['name'].toString(),
-              r['ok'] == true,
-              r['message']?.toString() ??
-                  (r['ok'] == true ? 'installed' : 'not available'),
-            ));
+            _pkgLog[lang]!.add(
+              PackageResult(
+                r['name'].toString(),
+                r['ok'] == true,
+                r['message']?.toString() ??
+                    (r['ok'] == true ? 'installed' : 'not available'),
+              ),
+            );
           }
         }
       } else {
@@ -323,10 +342,10 @@ class KernelController extends ChangeNotifier {
   }
 
   static KernelLanguage? _langOf(String? id) => switch (id) {
-        'r' => KernelLanguage.r,
-        'python' => KernelLanguage.python,
-        _ => null,
-      };
+    'r' => KernelLanguage.r,
+    'python' => KernelLanguage.python,
+    _ => null,
+  };
 
   static Map<String, dynamic> _asMap(Object? raw) {
     if (raw is Map<String, dynamic>) return raw;
