@@ -26,7 +26,7 @@ Completed local milestones:
 
 Raw suite receipts: `atelier-analyze-r4, atelier-test-r2, atelier-workspace-r2, atelier-runtime-final, atelier-android-r4, atelier-runtime-preparation-tests` in `.refinement/2026-10-30/logs/`. First-use prerequisites and commands are in [README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md).
 
-Local core acceptance is satisfied. Physical-device WebView, lifecycle/share-sheet behavior, unsigned iOS compilation and signed distribution remain external gates. The F-Droid draft is explicitly disabled; neither its old tag nor binary-runtime downloads constitute a completed source-build recipe. Before distribution, provide the corresponding GPL runtime source and tested source-build instructions, select the approved version/signing plan, then exercise upgrades and offline operation on devices. No publication or submission occurred.
+The host test, offline browser runtime and Android packaging gates are satisfied. Android WebView execution, physical-device lifecycle/share-sheet behavior, full iOS compilation and signed distribution remain external gates. The F-Droid draft is explicitly disabled; neither its old tag nor binary-runtime downloads constitute a completed source-build recipe. Before distribution, provide the corresponding GPL runtime source and tested source-build instructions, select the approved version/signing plan, then exercise upgrades and offline operation on devices. No signed application release or store submission occurred.
 
 ## Deferred work
 
@@ -53,6 +53,12 @@ The responsive-layout follow-up reproduced draft loss when the actual view cross
 The final shell including responsive transitions passes all 9 Flutter tests (`atelier-shell-tests-final`) and static analysis (`atelier-shell-analyze-final`) on 2026-10-31. The final Android package must use the `atelier-android-shell-final` build receipt; earlier builds predate the shell integration repair.
 
 `atelier-android-shell-final` completed with exit 0 on 2026-10-31. The final arm64 debug APK is 229,312,353 bytes, SHA-256 `8186aac8c5fbd4e556f23ba12a5336e43280c7f45f25165bf4ec64cd543c8ad7`. Its source includes the complete editor and shell preservation repairs. Real Android offline R/Python execution and device lifecycle checks remain separate observations; a successful build is not evidence that those journeys ran.
+
+### Published CI outcome — 2026-10-31
+
+Published source commit `1716676a820a302b7d94d2c6fca92a710075e6ac` passed [application CI](https://github.com/etabli-dev/etabli-atelier/actions/runs/41200143039), including frozen dependency resolution, runtime preparation, analysis, all 9 Flutter tests, the offline browser R/Python journey and Android APK packaging. The [documentation Pages build/deployment](https://github.com/etabli-dev/etabli-atelier/actions/runs/41200143150) also passed. These are observed remote results for that source commit, separate from the local checks above.
+
+The runtime journey ran in a browser; it does not establish Android WebView execution. Android runtime/device acceptance and full iOS compilation remain open, as do signing and store acceptance. The unsuccessful Android attempt is retained below.
 
 ### Android device attempt — 2026-10-31
 

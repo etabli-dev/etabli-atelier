@@ -24,4 +24,6 @@ These commands build from this source tree. Debug APKs are development artifacts
 
 ## Use and verification
 
-Read the [repository README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October refinement record](https://github.com/etabli-dev/etabli-atelier/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. See the workflow runs for the exact source commit; local verification does not establish a remote CI result.
+Read the [repository README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October refinement record](https://github.com/etabli-dev/etabli-atelier/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. Local checks alone do not establish remote CI results.
+
+For published source `1716676a820a`, [application CI](https://github.com/etabli-dev/etabli-atelier/actions/runs/41200143039) passed on 2026-10-31, including host tests, the offline browser R/Python journey and Android packaging. Android WebView/device acceptance and full iOS compilation remain open.
