@@ -10,7 +10,7 @@
 
 Établi Atelier is **under active development**. There are no App Store, Google Play or F-Droid releases yet.
 
-- **Android:** install the current **development build** as a signed **APK** from **[GitHub Releases](../../releases)**.
+- **Android:** build a development APK using the commands below. Automatic CI APK uploads are paused pending the runtime source-delivery checks in [THIRD_PARTY.md](THIRD_PARTY.md); older release downloads do not establish current readiness.
 - **App Store (iOS):** planned — not yet available.
 - **Google Play:** planned — not yet available.
 - **F-Droid:** planned — not yet available.

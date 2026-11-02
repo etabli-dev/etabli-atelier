@@ -11,6 +11,44 @@ const repo = fileURLToPath(new URL('../', import.meta.url)).replace(/\/$/, '');
 const { application: app } = JSON.parse(await readFile(`${repo}/tool/runtimes.lock.json`, 'utf8'));
 const results = `${repo}/tool/test-results`;
 await mkdir(results, { recursive: true });
+// Decode the emitted PNG, then inspect it on white so transparent black R
+// drawing remains visible. An empty/solid canvas is not evidence of a plot.
+async function saveVerifiedPlot(page, kernel) {
+  const deadline = performance.now() + 30000;
+  let plot;
+  while (performance.now() < deadline) {
+    plot = await page.evaluate(async kernel => {
+      const plot = window.events.filter(e => e.type === 'plot' && e.payload.kernel === kernel).at(-1);
+      if (!plot || !plot.payload.png.startsWith('data:image/png;base64,')) return false;
+      const image = new Image();
+      image.src = plot.payload.png;
+      await image.decode();
+      if (image.naturalWidth < 2 || image.naturalHeight < 2) return false;
+      const canvas = document.createElement('canvas');
+      canvas.width = image.naturalWidth; canvas.height = image.naturalHeight;
+      const context = canvas.getContext('2d');
+      context.fillStyle = 'white'; context.fillRect(0, 0, canvas.width, canvas.height);
+      context.drawImage(image, 0, 0);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      let ink = 0, white = 0;
+      for (let i = 0; i < pixels.length; i += 4) {
+        if (Math.min(pixels[i], pixels[i + 1], pixels[i + 2]) < 240) ink++;
+        else white++;
+      }
+      if (ink < 100 || white < 100) return false;
+      return {png: plot.payload.png, composite: canvas.toDataURL('image/png'),
+        width: canvas.width, height: canvas.height, inkPixels: ink, whitePixels: white};
+    }, kernel);
+    if (plot) break;
+    await new Promise(resolve => setTimeout(resolve, 50));
+  }
+  if (!plot) throw Error(`No nonblank renderable ${kernel} plot within 30 seconds`);
+  await writeFile(`${results}/${kernel}-plot.png`, Buffer.from(plot.png.split(',')[1], 'base64'));
+  await writeFile(`${results}/${kernel}-plot-white.png`, Buffer.from(plot.composite.split(',')[1], 'base64'));
+  const {png, composite, ...facts} = plot;
+  await writeFile(`${results}/${kernel}-plot.json`, JSON.stringify(facts, null, 2) + '\n');
+}
+
 let temp;
 let root = repo;
 if (app === 'vitrine') {
@@ -66,7 +104,7 @@ try {
     console.log('R snapshot', files);
     if (!files.some(f => f.path === 'output.txt' && atob(f.b64).includes('from R'))) throw Error('R workspace snapshot failed');
     await page.evaluate(() => window.EtabliKernel.stdin('r', 'plot(1:3, c(2, 4, 3))'));
-    await page.waitForFunction(() => window.events.some(e => e.type === 'plot' && e.payload.kernel === 'r'), null, {timeout:30000});
+    await saveVerifiedPlot(page, 'r');
     await page.evaluate(() => window.EtabliKernel.stdin('r', 'stop("expected fixture failure")'));
     await page.waitForFunction(() => window.events.some(e => e.type === 'stderr' && e.payload.text.includes('expected fixture failure')));
     await page.evaluate(() => { window.events = []; });
@@ -74,9 +112,10 @@ try {
     await page.waitForFunction(() => window.events.some(e => e.type === 'stdout' && e.payload.text.includes('56')));
     await page.evaluate(() => window.EtabliKernel.start('python'));
     await page.evaluate(files => window.EtabliFS.push('python', files), files);
-    await page.evaluate(() => window.EtabliKernel.stdin('python', 'import numpy, pandas, scipy, sklearn\nimport matplotlib.pyplot as plt\nprint(open("output.txt").read())\nplt.plot([1, 2], [3, 4])'));
+    await page.evaluate(code => window.EtabliKernel.stdin('python', code), "import numpy, pandas, scipy, sklearn\nfrom scipy.linalg import solve\nfrom sklearn.linear_model import LinearRegression\nimport matplotlib.pyplot as plt\nassert open(\"output.txt\").read().strip() == \"from R\"\nsolution = solve(numpy.array([[3.,1.],[1.,2.]]), numpy.array([9.,8.]))\nassert numpy.allclose(solution, [2.,3.])\nmodel = LinearRegression().fit(numpy.array([[1.],[2.],[3.]]), numpy.array([3.,5.,7.]))\nassert abs(model.predict(numpy.array([[4.]]))[0] - 9.) < 1e-8\nassert int(pandas.DataFrame({\"x\":[1,2,3]}).x.sum()) == 6\nprint(\"SCIENTIFIC_OK scipy_solve=2,3 sklearn_prediction=9 pandas_sum=6\")\nplt.plot([1, 2], [3, 4])");
     const events = await page.evaluate(() => window.events);
-    if (!events.some(e => e.type === 'plot' && e.payload.kernel === 'python')) throw Error('No Python plot');
+    if (!events.some(e => e.type === 'stdout' && e.payload.text.includes('SCIENTIFIC_OK'))) throw Error('Scientific numerical assertions did not finish');
+    await saveVerifiedPlot(page, 'python');
     if (events.some(e => e.type === 'stderr' && /Traceback|Error/.test(e.payload.text))) throw Error('Python execution failed');
   } else {
     await page.goto(origin + '/index.html');

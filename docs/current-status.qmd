@@ -4,7 +4,7 @@ title: "Current implementation and first use"
 
 Run R and Python locally with a shared workspace, console and plots. Bundled examples run offline; extra packages and imported code may use the network.
 
-This page describes the October 2026 source revision. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
+This page describes the October–November 2026 refinements. These source changes are not part of older development release downloads. Local checks are distinct from device, live-service and store acceptance.
 
 ## Build from a clean checkout
 
@@ -24,6 +24,10 @@ These commands build from this source tree. Debug APKs are development artifacts
 
 ## Use and verification
 
-Read the [repository README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October refinement record](https://github.com/etabli-dev/etabli-atelier/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. Local checks alone do not establish remote CI results.
+Read the [repository README](https://github.com/etabli-dev/etabli-atelier/blob/main/README.md) for the exact application workflow, privacy/storage behavior and platform differences. The [October–November refinement record](https://github.com/etabli-dev/etabli-atelier/blob/main/docs/refinement-2026-10.md) records findings, changes, observed checks, deferred work and the next release action. Local checks alone do not establish remote CI results.
 
-For published source `1716676a820a`, [application CI](https://github.com/etabli-dev/etabli-atelier/actions/runs/41200143039) passed on 2026-10-31, including host tests, the offline browser R/Python journey and Android packaging. Android WebView/device acceptance and full iOS compilation remain open.
+For published source `1716676a820a`, [application CI](https://github.com/etabli-dev/etabli-atelier/actions/runs/41200143039) passed on 2026-10-31, including host tests, the offline browser R/Python journey and Android packaging. At that milestone, Android WebView acceptance was still open; the later scoped Android results follow below. Full iOS compilation remains open.
+
+On 2026-11-02, the final smaller APK identified in the refinement record passed an in-place Android upgrade with the saved R file and examples unchanged. Its actual offline UI executed R/Python arithmetic, pandas/SciPy/OpenBLAS/scikit-learn calculations and both bundled histogram examples on an API 35 ARM64/4 KiB emulator; the saved file reopened after restart. Physical-device/16 KiB behavior, full iOS compilation and GPL corresponding-source/distribution gates remain open.
+
+Automatic CI APK uploads are held until the runtime source-delivery gate in [THIRD_PARTY.md](https://github.com/etabli-dev/etabli-atelier/blob/main/THIRD_PARTY.md) is closed; preparation, runtime tests and APK builds remain enabled.

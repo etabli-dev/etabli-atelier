@@ -122,13 +122,14 @@ def prepare(lock, cached, stage):
             for name in lock['python_packages']:
                 include(name)
             packages = {package_lock['packages'][name]['file_name']: package_lock['packages'][name] for name in selected}
+            all_payloads = {package['file_name'] for package in package_lock['packages'].values()}
             py = assets / 'runtimes/pyodide'
             for entry in archive:
                 safe_name(entry.name)
                 if not entry.isfile() or not entry.name.startswith(py_prefix):
                     continue
                 rel = entry.name[len(py_prefix):]
-                if rel.endswith('.whl') and rel not in packages:
+                if (rel in all_payloads or rel.endswith('.whl')) and rel not in packages:
                     continue
                 data = archive.extractfile(entry).read()
                 if rel in packages and hashlib.sha256(data).hexdigest() != packages[rel]['sha256']:
@@ -142,6 +143,54 @@ def prepare(lock, cached, stage):
     return assets
 
 
+def publish_assets(prepared, repo):
+    files = sorted(p for p in prepared.rglob('*') if p.is_file())
+    previous_path = repo / 'tool/runtimes.prepared.json'
+    previous = json.loads(previous_path.read_text())['files'] if previous_path.exists() else {}
+    stale = []
+
+    def checked_destination(relative):
+        dest = repo / 'assets' / relative
+        current = repo
+        for part in dest.relative_to(repo).parts:
+            current = current / part
+            if current.is_symlink():
+                raise ValueError('Runtime destination contains a symlink: ' + str(current))
+        try:
+            dest.resolve().relative_to(repo.resolve())
+        except ValueError:
+            raise ValueError('Runtime destination escapes repository: ' + str(dest))
+        return dest
+
+    # Validate the entire destination tree before any copying or stale cleanup.
+    destinations = {file: checked_destination(file.relative_to(prepared)) for file in files}
+    pyodide_lock = prepared / 'runtimes/pyodide/pyodide-lock.json'
+    if pyodide_lock.exists():
+        package_lock = json.loads(pyodide_lock.read_text())
+        for package in package_lock['packages'].values():
+            rel = 'runtimes/pyodide/' + safe_name(package['file_name'])
+            existing = checked_destination(rel)
+            if (prepared / rel).exists() or not existing.exists():
+                continue
+            # Only remove unchanged outputs identified by the prior receipt.
+            # Check every candidate before publishing any new files.
+            if (existing.is_symlink() or not existing.is_file()
+                    or previous.get(rel) != digest(existing)):
+                raise ValueError('Excluded runtime payload is modified or untracked: ' + rel)
+            stale.append(existing)
+    for file in files:
+        dest = destinations[file]
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(dir=dest.parent, delete=False) as out:
+            temp = Path(out.name)
+            with file.open('rb') as source:
+                shutil.copyfileobj(source, out)
+        temp.replace(dest)
+    for file in stale:
+        file.unlink()
+    return {file.relative_to(prepared).as_posix(): digest(file) for file in files}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--cache-dir', type=Path, default=Path.home() / '.cache/etabli-runtimes')
@@ -153,17 +202,8 @@ def main():
     cached = {a['name']: fetch(a, args.cache_dir, args.offline) for a in lock['artifacts']}
     with tempfile.TemporaryDirectory(prefix='etabli-runtimes-') as tmp:
         prepared = prepare(lock, cached, Path(tmp))
-        files = sorted(p for p in prepared.rglob('*') if p.is_file())
         # All downloads, hashes and archive contents pass before any app asset changes.
-        for file in files:
-            dest = repo / 'assets' / file.relative_to(prepared)
-            dest.parent.mkdir(parents=True, exist_ok=True)
-            with tempfile.NamedTemporaryFile(dir=dest.parent, delete=False) as out:
-                temp = Path(out.name)
-                with file.open('rb') as source:
-                    shutil.copyfileobj(source, out)
-            temp.replace(dest)
-        receipt = {file.relative_to(prepared).as_posix(): digest(file) for file in files}
+        receipt = publish_assets(prepared, repo)
         target = repo / 'tool/runtimes.prepared.json'
         target.write_text(json.dumps({'inputs': lock, 'files': receipt}, indent=2) + '\n')
     print(f'Prepared and verified {len(receipt)} runtime assets for {lock["application"]}.')

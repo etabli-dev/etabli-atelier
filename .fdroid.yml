@@ -1,13 +1,10 @@
 # F-Droid build recipe for Etabli Atelier
 # Lives at the repo root so `fdroid build` / fdroiddata can consume it directly.
 #
-# RUNTIME ASSETS: this app bundles WebR, Pyodide as open-source WebAssembly.
-# They are NOT compiled by this recipe; they are vendored as release artifacts of
-# their upstream open-source projects (see THIRD_PARTY.md for exact pinned versions,
-# source URLs and licenses). The `prebuild` step fetches them from their canonical
-# upstream release URLs so the scanner sees provenance rather than opaque blobs.
-# If the main-repo reviewer requires building them from source, see FDROID_NOTES.md
-# for the fallback (own-repo distribution via Binaries/AllowedAPKSigningKeys).
+# RUNTIME ASSETS: the disabled draft downloads pinned WebAssembly binaries.
+# Binary provenance does not establish corresponding-source delivery or F-Droid
+# source-build acceptance. THIRD_PARTY.md and FDROID_NOTES.md record the open
+# maintainer tasks; neither scanner exclusions nor a private repository close them.
 
 Categories:
   - Science & Education
