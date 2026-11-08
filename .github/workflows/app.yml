@@ -69,4 +69,6 @@ jobs:
       - run: flutter pub get --enforce-lockfile
       - name: Compile unsigned iOS simulator application
         run: flutter build ios --simulator --debug --no-codesign --no-pub
+      - name: Compile unsigned iOS device Release application
+        run: flutter build ios --release --no-codesign --no-pub
       # Runtime source-delivery gates also apply to Apple binaries; no app upload.
