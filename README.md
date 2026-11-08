@@ -2,7 +2,7 @@
 
 > Run R and Python on your phone, fully offline.
 
-`Android` · iOS and desktop runners require platform verification · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
+`Android` · iOS requires platform verification · desktop not planned · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
 
 Établi Atelier is an offline polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded runtime, with a shared virtual filesystem between the two. numpy, pandas, scipy, matplotlib and scikit-learn come pre-bundled. Capture base-R and matplotlib plots to PNG; additional R packages such as ggplot2 require a separate package installation. No account is required for local execution.
 
@@ -14,7 +14,16 @@
 - **App Store (iOS):** planned — not yet available.
 - **Google Play:** planned — not yet available.
 - **F-Droid:** planned — not yet available.
-- **Desktop runners:** experimental; desktop builds and embedded-WebView support have not been verified in this refinement.
+- **Desktop (Ubuntu/Debian, Windows, macOS):** not planned. The generated `linux/`, `macos/` and `windows/` runner folders have never been built or verified.
+
+## Platforms
+
+Établi Atelier is a mobile app for Android and iOS, including tablets. Desktops
+already have native R and Python, RStudio, Positron, Jupyter, and browsers that run
+WebR and Pyodide directly, so no desktop application is planned. The
+[platform roadmap](docs/platform-roadmap.md) covers the remaining iOS work, tablet
+layout, signing, store and F-Droid steps, and a recommendation for the unused desktop
+runner folders.
 
 ## Privacy
 
@@ -26,7 +35,7 @@ The bundled examples and runtimes work without an external connection. No analyt
 lib/         app, features, data, theme, widgets
 android/     Android runner
 ios/         iOS runner
-macos/ windows/ linux/    desktop runners
+macos/ windows/ linux/    unverified desktop runners (not a release target)
 .fdroid.yml  disabled F-Droid draft; see FDROID_NOTES.md
 fastlane/    store + F-Droid listing metadata
 ```
@@ -35,7 +44,7 @@ fastlane/    store + F-Droid listing metadata
 
 Dart 3.12+, flutter_riverpod, hive, flutter_inappwebview, flutter_code_editor
 
-**Status:** In active development — not yet released; dev builds available as a signed APK via [GitHub Releases](../../releases).
+**Status:** In active development — not yet released; dev builds available as a debug-signed APK via [GitHub Releases](../../releases).
 
 ## Support development
 
