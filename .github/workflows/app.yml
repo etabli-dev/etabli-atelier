@@ -38,6 +38,8 @@ jobs:
       - name: Exercise the real offline runtimes
         run: npm --prefix tool test
       - run: flutter build apk --debug
+      - name: Compile unsigned release configuration
+        run: flutter build apk --release
       # APK uploads remain paused until corresponding-source delivery is verified;
       # see THIRD_PARTY.md. The APK build and every validation step still run.
       - name: Retain runtime verification evidence
@@ -49,3 +51,22 @@ jobs:
             tool/test-results/*.png
             tool/test-results/*-plot.json
             tool/runtimes.prepared.json
+
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          flutter-version: '3.47.9'
+          channel: stable
+          cache: true
+      - name: Verify and prepare pinned offline runtimes
+        run: |
+          python3 tool/test_fetch_runtimes.py
+          bash tool/fetch_runtimes.sh
+      - run: flutter pub get --enforce-lockfile
+      - name: Compile unsigned iOS simulator application
+        run: flutter build ios --simulator --debug --no-codesign --no-pub
+      # Runtime source-delivery gates also apply to Apple binaries; no app upload.
