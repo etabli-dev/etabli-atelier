@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-Proprietary
 import 'dart:typed_data';
 import 'package:path/path.dart' as p;
 import 'workspace_store.dart';

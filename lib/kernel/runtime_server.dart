@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-Proprietary
 
 // Serves the bundled runtime assets (WebR, later Pyodide) and the host page
 // over http://localhost so the WebView loads them with a proper origin and

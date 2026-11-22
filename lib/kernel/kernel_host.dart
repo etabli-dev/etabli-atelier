@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: LicenseRef-Proprietary
 
 // Hosts the kernel WebView for the whole app lifetime. The WebView is a pure
 // compute surface — it is kept effectively invisible (1x1, behind the UI); all
