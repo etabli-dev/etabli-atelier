@@ -2,18 +2,18 @@
 
 > Run R and Python on your phone, fully offline.
 
-`Android` · iOS requires platform verification · desktop not planned · All rights reserved · Part of the [Établi Suite](https://github.com/etabli-dev)
+`Android` · iOS requires platform verification · desktop not planned · AGPL-3.0-only · Part of the [Établi Suite](https://github.com/etabli-dev)
 
 Établi Atelier is an offline polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded runtime, with a shared virtual filesystem between the two. numpy, pandas, scipy, matplotlib and scikit-learn come pre-bundled. Capture base-R and matplotlib plots to PNG; additional R packages such as ggplot2 require a separate package installation. No account is required for local execution.
 
 ## Availability
 
-Établi Atelier is **under active development**. There are no App Store or Google Play releases yet.
+Établi Atelier is **under active development**. There are no App Store, Google Play or F-Droid releases yet.
 
 - **Android:** build a development APK using the commands below. Automatic CI APK uploads are paused pending the runtime source-delivery checks in [THIRD_PARTY.md](THIRD_PARTY.md); older release downloads do not establish current readiness.
 - **App Store (iOS):** planned — not yet available.
 - **Google Play:** planned — not yet available.
-- **F-Droid:** not planned (F-Droid requires a free licence).
+- **F-Droid:** planned — not yet available.
 - **Desktop (Ubuntu/Debian, Windows, macOS):** not planned. The generated `linux/`, `macos/` and `windows/` runner folders have never been built or verified.
 
 ## Platforms
@@ -48,12 +48,14 @@ Dart 3.12+, flutter_riverpod, hive, flutter_inappwebview, flutter_code_editor
 
 ## Support development
 
-- 💚 **[Liberapay](https://liberapay.com/rabanheller/)** — recurring, 0% commission.
+- 💚 **[Liberapay](https://liberapay.com/rabanheller/)** — recurring, 0% commission, to be shown on the F-Droid listing once published.
 
 ## License
 
-Proprietary, all rights reserved — see [LICENSE](LICENSE) and [NOTICE](NOTICE). Third-party components keep
-their own licences. Versions published before 22 November 2026 remain available under Apache-2.0.
+GNU Affero General Public License v3.0 only (AGPL-3.0-only) — see [LICENSE](LICENSE) and
+[NOTICE](NOTICE). Commercial licences are available from the copyright holder
+(etabli.dev@outlook.com). Third-party components keep their own licences. Versions published
+before 22 November 2026 remain available under Apache-2.0.
 
 Copyright 2026 R. Heller.
 

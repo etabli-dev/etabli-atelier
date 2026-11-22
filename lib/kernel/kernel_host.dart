@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // Hosts the kernel WebView for the whole app lifetime. The WebView is a pure
 // compute surface — it is kept effectively invisible (1x1, behind the UI); all

@@ -1,5 +1,3 @@
-Note: since 22 November 2026 this project is proprietary (all rights reserved), so F-Droid publication is no longer possible.
-
 # F-Droid preparation status
 
 No F-Droid submission or acceptance has been verified. The existing `.fdroid.yml` is explicitly disabled, with automatic update checks off. It is a historical draft: its v1.0 release reference and assumed release workflow must be reconciled with the approved release tag and signing/version-code plan before use.

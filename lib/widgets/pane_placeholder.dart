@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // Consistent "coming in milestone N" placeholder for not-yet-built panes.
 

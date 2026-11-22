@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Prepare pinned offline runtimes. Requires Python 3.9+, no third-party modules."""
 # Copyright 2026 R. Heller
-# SPDX-License-Identifier: LicenseRef-Proprietary
+# SPDX-License-Identifier: AGPL-3.0-only
 import argparse
 import hashlib
 import json

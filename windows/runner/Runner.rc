@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "etabli_atelier" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "etabli_atelier" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.raban.etabli. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 R. Heller. AGPL-3.0-only." "\0"
             VALUE "OriginalFilename", "etabli_atelier.exe" "\0"
             VALUE "ProductName", "etabli_atelier" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 import 'dart:typed_data';
 import 'package:path/path.dart' as p;
 import 'workspace_store.dart';

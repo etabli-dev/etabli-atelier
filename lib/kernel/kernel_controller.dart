@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // Bridges the in-WebView kernels (R via WebR, Python via Pyodide) to the
 // Flutter shell. The WebView calls back through the `onKernelEvent` JS handler

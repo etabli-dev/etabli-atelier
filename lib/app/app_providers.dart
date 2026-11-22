@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: LicenseRef-Proprietary
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // Riverpod providers wiring app-wide state (settings, theme, active kernel).
 // Uses the Riverpod 3.x Notifier API.
