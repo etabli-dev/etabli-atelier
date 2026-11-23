@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // The canonical workspace — real files on device storage under the app's
 // documents directory. This is the source of truth that survives restarts and

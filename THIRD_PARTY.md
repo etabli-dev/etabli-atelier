@@ -1,6 +1,6 @@
 # Runtime provenance and redistribution
 
-The application source is Apache-2.0. Bundled runtimes and packages retain their own licenses; the WebR binary is **GPL-3.0**, not Apache-2.0. Upstream notices are included under `assets/licenses/` and exposed through Settings → Open-source licenses.
+The application source is AGPL-3.0-only (commercial licences available from the copyright holder). Bundled runtimes and packages retain their own licenses; the WebR binary is **GPL-3.0**. Upstream notices are included under `assets/licenses/` and exposed through Settings → Open-source licenses.
 
 | Component | Exact version | Source and license |
 |---|---|---|

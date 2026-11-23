@@ -1,5 +1,5 @@
 // Copyright 2026 R. Heller
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: AGPL-3.0-only
 
 // The navigation shell: responsive rail/bottom-bar over the six feature panes,
 // with a per-session kernel switcher (R / Python — two separate kernels).

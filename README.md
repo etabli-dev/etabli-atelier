@@ -2,7 +2,7 @@
 
 > Run R and Python on your phone, fully offline.
 
-`Android` · iOS requires platform verification · desktop not planned · Apache-2.0 · Part of the [Établi Suite](https://github.com/etabli-dev)
+`Android` · iOS requires platform verification · desktop not planned · AGPL-3.0-only · Part of the [Établi Suite](https://github.com/etabli-dev)
 
 Établi Atelier is an offline polyglot IDE that runs R (via WebR) and Python (via Pyodide) as switchable kernels inside an embedded runtime, with a shared virtual filesystem between the two. numpy, pandas, scipy, matplotlib and scikit-learn come pre-bundled. Capture base-R and matplotlib plots to PNG; additional R packages such as ggplot2 require a separate package installation. No account is required for local execution.
 
@@ -52,7 +52,10 @@ Dart 3.12+, flutter_riverpod, hive, flutter_inappwebview, flutter_code_editor
 
 ## License
 
-Apache License 2.0 — see [LICENSE](LICENSE) and [NOTICE](NOTICE).
+GNU Affero General Public License v3.0 only (AGPL-3.0-only) — see [LICENSE](LICENSE) and
+[NOTICE](NOTICE). Commercial licences are available from the copyright holder
+(etabli.dev@outlook.com). Third-party components keep their own licences. Versions published
+before 22 November 2026 remain available under Apache-2.0.
 
 Copyright 2026 R. Heller.
 
