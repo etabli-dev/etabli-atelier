@@ -8,7 +8,10 @@ under a written contributor agreement that allows the copyright holder to offer 
 - **Privacy is a hard constraint.** No analytics, telemetry, or third-party SDKs.
 - **Dependencies must be FOSS** and buildable from a trusted source — this is what
   keeps the app eligible for F-Droid. No Firebase, no GMS.
-- **Shared design tokens.** Accent #28A745, light/dark/system. Don't fork the palette.
+- **Shared design tokens.** Hugo Coder neutrals and the suite's accent set (default Coder blue),
+  System/Light/Dark, in `lib/theme/appearance.dart`, identical in every Établi Flutter app. Don't fork the palette.
+- **Every user-facing string in both languages.** Add it to `lib/l10n/app_en.arb` and `app_de.arb`, then run
+  `flutter gen-l10n`. Labels must not wrap on a 375-pt phone in either language.
 
 ## Releases (maintainer)
 Each release commit carries a matching tag (`v1.0`). Keep `fastlane/metadata/` current.

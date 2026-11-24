@@ -9,10 +9,15 @@ import 'package:etabli_atelier/app/shell.dart';
 import 'package:etabli_atelier/data/settings_store.dart';
 import 'package:etabli_atelier/features/editor/editor_screen.dart';
 import 'package:etabli_atelier/fs/workspace_store.dart';
+import 'package:etabli_atelier/theme/appearance.dart';
 
 class _Settings implements SettingsStore {
   @override
-  ThemeMode get themeMode => ThemeMode.light;
+  AppearanceMode get appearanceMode => AppearanceMode.light;
+  @override
+  AccentChoice get accent => AccentChoice.coderBlue;
+  @override
+  AppLanguage get language => AppLanguage.en;
   @override
   double get fontSize => 14;
   @override

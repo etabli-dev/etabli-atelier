@@ -1,0 +1,308 @@
+{
+  "@@locale": "en",
+  "navFiles": "Files",
+  "navEditor": "Editor",
+  "navConsole": "Console",
+  "navPlots": "Plots",
+  "navPackages": "Packages",
+  "navSettings": "Settings",
+  "settingsTitle": "Settings",
+  "kernelName": "{kernel} kernel",
+  "@kernelName": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "commonCancel": "Cancel",
+  "commonOk": "OK",
+  "commonDelete": "Delete",
+  "commonSave": "Save",
+  "commonDiscard": "Discard",
+  "commonRetry": "Retry",
+  "commonRun": "Run",
+  "filesNameHint": "name",
+  "filesNewFile": "New file",
+  "filesNewFolder": "New folder",
+  "filesImport": "Import from device",
+  "filesRename": "Rename",
+  "filesMove": "Move…",
+  "filesMoveTitle": "Move “{name}” to…",
+  "@filesMoveTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "filesWorkspaceRoot": "/ (workspace root)",
+  "filesDeleteTitle": "Delete “{name}”?",
+  "@filesDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "filesDeleteFolderBody": "The folder and all its contents will be removed.",
+  "filesDeleteFileBody": "This file will be removed.",
+  "filesShare": "Share / save a copy…",
+  "filesActions": "Actions for {name}",
+  "@filesActions": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "filesEmpty": "Workspace is empty.\nCreate or import a file.",
+  "filesPull": "Pull from {kernel}",
+  "@filesPull": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "filesPullTooltip": "Copy the files {kernel} wrote into the workspace",
+  "@filesPullTooltip": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "errorGeneric": "Error: {detail}",
+  "@errorGeneric": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "errorInvalidPath": "That is not a valid workspace path.",
+  "errorInvalidName": "“{name}” is not a valid name.",
+  "@errorInvalidName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "errorExists": "“{path}” already exists.",
+  "@errorExists": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "errorMoveIntoItself": "A folder cannot be moved into itself.",
+  "errorSymlink": "Links inside the workspace are not supported.",
+  "editorScratch": "scratch buffer",
+  "editorThisScratch": "this scratch buffer",
+  "editorNewScratch": "a new scratch buffer",
+  "editorOpenFailed": "Could not open {path} as text. The current buffer is retained.",
+  "@editorOpenFailed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "editorUnsavedTitle": "Unsaved changes",
+  "editorUnsavedBody": "Save changes to {current} before opening {next}?",
+  "@editorUnsavedBody": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "editorSaved": "Saved {path}",
+  "@editorSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "editorSaveFailed": "Could not save {path}. The editor buffer is retained.",
+  "@editorSaveFailed": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
+  "editorSaveAs": "Save as",
+  "editorUntitled": "untitled",
+  "editorKernelStarting": "{kernel} kernel is still starting…",
+  "@editorKernelStarting": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "editorSelection": "Selection",
+  "editorRunSelection": "Run the selection or the current line",
+  "editorRunFile": "Save and run the whole file",
+  "editorOutput": "Output · {kernel}",
+  "@editorOutput": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "editorClearOutput": "Clear output",
+  "editorShowOutput": "Show output",
+  "editorHideOutput": "Hide output",
+  "consoleHintR": "Enter R expression…",
+  "consoleHintPython": "Enter Python statement…",
+  "consoleNotReady": "Kernel not ready",
+  "consoleInputLabel": "{kernel} input",
+  "@consoleInputLabel": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "kernelStateIdle": "idle",
+  "kernelStateLoading": "loading…",
+  "kernelStateReady": "ready",
+  "kernelStateError": "error",
+  "consoleClear": "Clear console",
+  "consoleRestartR": "Force-restart R kernel",
+  "consoleRestartPython": "Force-restart (reloads kernel host)",
+  "consoleBooting": "Booting kernel…",
+  "kernelStartingR": "Starting R (WebR)…",
+  "kernelStartingPython": "Starting Python (Pyodide)…",
+  "kernelReadyR": "R kernel ready.",
+  "kernelError": "{kernel} kernel error: {detail}",
+  "@kernelError": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      },
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "kernelErrorUnknown": "unknown",
+  "kernelRestartingR": "Restarting R kernel…",
+  "kernelReloadingHost": "Reloading kernel host…",
+  "kernelPackageLoadWarning": "Package load warning: {detail}",
+  "@kernelPackageLoadWarning": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "kernelPlotCaptureWarning": "Plot capture warning: {detail}",
+  "@kernelPlotCaptureWarning": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "kernelHostStartFailed": "Could not start the local runtime: {detail}",
+  "@kernelHostStartFailed": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "plotsClear": "Clear plots",
+  "plotsItem": "Plot {index}",
+  "@plotsItem": {
+    "placeholders": {
+      "index": {
+        "type": "String"
+      }
+    }
+  },
+  "plotsEmpty": "No plots yet",
+  "plotsHintR": "Run R plotting code, for example:",
+  "plotsHintGgplot": "ggplot2 works once installed under Packages.",
+  "plotsHintPython": "Run matplotlib code, for example:",
+  "packagesTitleR": "R packages",
+  "packagesTitlePython": "Python packages",
+  "packagesSourceR": "repo.r-wasm.org (WebR WASM binaries)",
+  "packagesSourcePython": "PyPI via micropip (pure-Python & WASM wheels)",
+  "packagesSource": "Source: {source}",
+  "@packagesSource": {
+    "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
+  "packagesNetwork": "Installing requires a network connection. Bundled packages already work offline.",
+  "packagesHintR": "e.g. ggplot2, jsonlite",
+  "packagesHintPython": "e.g. requests, sympy",
+  "packagesInstall": "Install",
+  "packagesStartFirst": "Switch to and start the {kernel} kernel first (Console tab).",
+  "@packagesStartFirst": {
+    "placeholders": {
+      "kernel": {
+        "type": "String"
+      }
+    }
+  },
+  "packagesNone": "No installations yet.",
+  "packagesInstalling": "Installing… (requires network)",
+  "packagesInstalled": "installed",
+  "packagesUnavailableR": "not available in the WebR WASM repository",
+  "packagesUnavailable": "not available",
+  "packagesInstallFailed": "Install failed",
+  "packagesInstallError": "Install error: {detail}",
+  "@packagesInstallError": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "packagesMicropipUnavailable": "micropip unavailable: {detail}",
+  "@packagesMicropipUnavailable": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsAppearance": "Appearance",
+  "settingsLanguage": "App language",
+  "settingsMode": "Mode",
+  "modeSystem": "System",
+  "modeLight": "Light",
+  "modeDark": "Dark",
+  "languageSystem": "System",
+  "settingsAccent": "Accent colour",
+  "accentCoderBlue": "Coder blue",
+  "accentGreen": "Green",
+  "accentYellow": "Yellow",
+  "accentOrange": "Orange",
+  "accentRed": "Red",
+  "accentPurple": "Purple",
+  "accentGraphite": "Graphite",
+  "settingsAppearanceNote": "Language, mode and accent colour apply at once. Default: Hugo Coder palette.",
+  "settingsEditor": "Editor",
+  "settingsFontSize": "Font size",
+  "settingsKernel": "Kernel",
+  "settingsDefaultKernel": "Default kernel",
+  "settingsAbout": "About",
+  "settingsAboutBody": "Offline polyglot mobile IDE.\nR via WebR · Python via Pyodide.\nBoth on-device, no network required.",
+  "settingsLicenses": "Open-source licenses"
+}

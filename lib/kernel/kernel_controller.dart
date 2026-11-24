@@ -17,17 +17,52 @@ enum KernelState { idle, loading, ready, error }
 
 enum ConsoleStream { stdout, stderr, input, prompt, system }
 
+/// App-authored console messages; the UI localizes them when it shows them, so they follow the app
+/// language at once.
+enum KernelNotice {
+  startingR,
+  startingPython,
+  readyR,
+  kernelError,
+  restartingR,
+  reloadingHost,
+  packageLoadWarning,
+  plotCaptureWarning,
+  hostStartFailed,
+}
+
 class ConsoleLine {
-  const ConsoleLine(this.text, this.stream);
+  const ConsoleLine(this.text, this.stream, {this.notice});
+
+  /// The kernel's own text, or the detail of a [notice] (an upstream error message, may be empty).
   final String text;
   final ConsoleStream stream;
+  final KernelNotice? notice;
+}
+
+/// The outcome of a package installation step; the UI localizes it.
+enum PackageOutcome {
+  pending,
+  installed,
+  unavailableR,
+  unavailable,
+  failed,
+  kernelNotReady,
+  installFailed,
+  installError,
+  micropipUnavailable,
 }
 
 class PackageResult {
-  const PackageResult(this.name, this.ok, this.message);
+  const PackageResult(this.name, this.outcome, [this.detail = '']);
   final String name;
-  final bool ok;
-  final String message;
+  final PackageOutcome outcome;
+
+  /// The upstream message (micropip or JavaScript error), if any; not translated.
+  final String detail;
+
+  bool get pending => outcome == PackageOutcome.pending;
+  bool get ok => pending || outcome == PackageOutcome.installed;
 }
 
 class KernelController extends ChangeNotifier {
@@ -85,6 +120,10 @@ class KernelController extends ChangeNotifier {
   List<PackageResult> packageLogFor(KernelLanguage lang) =>
       List.unmodifiable(_pkgLog[lang]!);
 
+  // Prefixes of the host page's own warnings (assets/web/kernel_host.js).
+  static const String _packageLoadWarning = 'Package load warning: ';
+  static const String _plotCaptureWarning = 'Plot capture warning: ';
+
   static String _id(KernelLanguage lang) =>
       lang == KernelLanguage.r ? 'r' : 'python';
 
@@ -131,7 +170,25 @@ class KernelController extends ChangeNotifier {
         }
       case 'stderr':
         if (lang != null) {
-          _add(lang, payload['text'] as String? ?? '', ConsoleStream.stderr);
+          final String text = payload['text'] as String? ?? '';
+          // The host page prefixes its own warnings; keep only the upstream detail.
+          if (text.startsWith(_packageLoadWarning)) {
+            _add(
+              lang,
+              text.substring(_packageLoadWarning.length),
+              ConsoleStream.stderr,
+              notice: KernelNotice.packageLoadWarning,
+            );
+          } else if (text.startsWith(_plotCaptureWarning)) {
+            _add(
+              lang,
+              text.substring(_plotCaptureWarning.length),
+              ConsoleStream.stderr,
+              notice: KernelNotice.plotCaptureWarning,
+            );
+          } else {
+            _add(lang, text, ConsoleStream.stderr);
+          }
         }
       case 'stdin':
         if (lang != null) {
@@ -161,6 +218,18 @@ class KernelController extends ChangeNotifier {
     if (kernel == 'host') {
       if (state == 'error') {
         lastError = payload['message'] as String?;
+        if (payload['code'] == 'serverStartFailed') {
+          // Without the local server neither kernel can boot: say so instead of "booting" forever.
+          for (final KernelLanguage l in KernelLanguage.values) {
+            _state[l] = KernelState.error;
+            _add(
+              l,
+              lastError ?? '',
+              ConsoleStream.system,
+              notice: KernelNotice.hostStartFailed,
+            );
+          }
+        }
       } else if (state == 'loaded') {
         // The JS module's static imports finished. Now (and only now) is
         // window.EtabliKernel actually defined, so it's safe to start kernels.
@@ -177,15 +246,16 @@ class KernelController extends ChangeNotifier {
         _state[lang] = KernelState.loading;
         _add(
           lang,
-          lang == KernelLanguage.r
-              ? 'Starting R (WebR)…'
-              : 'Starting Python (Pyodide)…',
+          '',
           ConsoleStream.system,
+          notice: lang == KernelLanguage.r
+              ? KernelNotice.startingR
+              : KernelNotice.startingPython,
         );
       case 'ready':
         _state[lang] = KernelState.ready;
         if (lang == KernelLanguage.r) {
-          _add(lang, 'R kernel ready.', ConsoleStream.system);
+          _add(lang, '', ConsoleStream.system, notice: KernelNotice.readyR);
         }
         onKernelReady?.call(lang);
       case 'error':
@@ -193,9 +263,9 @@ class KernelController extends ChangeNotifier {
         lastError = payload['message'] as String?;
         _add(
           lang,
-          '${lang == KernelLanguage.r ? 'R' : 'Python'} kernel error: '
-          '${lastError ?? 'unknown'}',
+          lastError ?? '',
           ConsoleStream.system,
+          notice: KernelNotice.kernelError,
         );
     }
     notifyListeners();
@@ -244,7 +314,7 @@ class KernelController extends ChangeNotifier {
   Future<void> restart(KernelLanguage lang) async {
     if (lang == KernelLanguage.r) {
       _state[lang] = KernelState.loading;
-      _add(lang, 'Restarting R kernel…', ConsoleStream.system);
+      _add(lang, '', ConsoleStream.system, notice: KernelNotice.restartingR);
       notifyListeners();
       await _eval("void window.EtabliKernel.restart('r');");
     } else {
@@ -260,7 +330,12 @@ class KernelController extends ChangeNotifier {
     for (final KernelLanguage l in _state.keys) {
       _state[l] = KernelState.loading;
     }
-    _add(KernelLanguage.python, 'Reloading kernel host…', ConsoleStream.system);
+    _add(
+      KernelLanguage.python,
+      '',
+      ConsoleStream.system,
+      notice: KernelNotice.reloadingHost,
+    );
     notifyListeners();
     await _web?.reload();
   }
@@ -275,14 +350,18 @@ class KernelController extends ChangeNotifier {
     final InAppWebViewController? web = _web;
     if (web == null || names.isEmpty) return;
     if (_state[lang] != KernelState.ready) {
-      _pkgLog[lang]!.add(const PackageResult('—', false, 'Kernel not ready'));
+      _pkgLog[lang]!.add(
+        const PackageResult('—', PackageOutcome.kernelNotReady),
+      );
       notifyListeners();
       return;
     }
     _installing = true;
-    _pkgLog[lang]!.add(
-      PackageResult(names.join(', '), true, 'Installing… (requires network)'),
+    final PackageResult pending = PackageResult(
+      names.join(', '),
+      PackageOutcome.pending,
     );
+    _pkgLog[lang]!.add(pending);
     notifyListeners();
 
     final String fn = lang == KernelLanguage.r ? 'installR' : 'installPython';
@@ -293,33 +372,59 @@ class KernelController extends ChangeNotifier {
       );
       final Object? value = res?.value;
       if (value is Map) {
-        if (value['error'] != null) {
-          _pkgLog[lang]!.add(
-            PackageResult('—', false, value['error'].toString()),
-          );
-        }
+        final Object? error = value['error'];
+        if (error != null) _pkgLog[lang]!.add(_hostError(error.toString()));
         final Object? results = value['results'];
         if (results is List) {
           for (final Map r in results.whereType<Map>()) {
+            final bool ok = r['ok'] == true;
+            final String message = r['message']?.toString() ?? '';
             _pkgLog[lang]!.add(
               PackageResult(
                 r['name'].toString(),
-                r['ok'] == true,
-                r['message']?.toString() ??
-                    (r['ok'] == true ? 'installed' : 'not available'),
+                ok
+                    ? PackageOutcome.installed
+                    : lang == KernelLanguage.r
+                    ? PackageOutcome.unavailableR
+                    : message.isEmpty
+                    ? PackageOutcome.unavailable
+                    : PackageOutcome.failed,
+                ok || lang == KernelLanguage.r ? '' : message,
               ),
             );
           }
         }
       } else {
-        _pkgLog[lang]!.add(const PackageResult('—', false, 'Install failed'));
+        _pkgLog[lang]!.add(
+          const PackageResult('—', PackageOutcome.installFailed),
+        );
       }
     } catch (e) {
-      _pkgLog[lang]!.add(PackageResult('—', false, 'Install error: $e'));
+      _pkgLog[lang]!.add(
+        PackageResult('—', PackageOutcome.installError, e.toString()),
+      );
     } finally {
+      // The results replace the "installing" entry, which would otherwise keep its hourglass.
+      _pkgLog[lang]!.remove(pending);
       _installing = false;
       notifyListeners();
     }
+  }
+
+  /// A top-level error of the host page's installer (assets/web/kernel_host.js).
+  static PackageResult _hostError(String error) {
+    const String micropip = 'micropip unavailable: ';
+    if (error.startsWith(micropip)) {
+      return PackageResult(
+        '—',
+        PackageOutcome.micropipUnavailable,
+        error.substring(micropip.length),
+      );
+    }
+    if (error.endsWith('kernel not ready')) {
+      return const PackageResult('—', PackageOutcome.kernelNotReady);
+    }
+    return PackageResult('—', PackageOutcome.installError, error);
   }
 
   // --- internals ----------------------------------------------------------
@@ -327,8 +432,13 @@ class KernelController extends ChangeNotifier {
     await _web?.evaluateJavascript(source: source);
   }
 
-  void _add(KernelLanguage lang, String text, ConsoleStream stream) {
-    _lines[lang]!.add(ConsoleLine(text, stream));
+  void _add(
+    KernelLanguage lang,
+    String text,
+    ConsoleStream stream, {
+    KernelNotice? notice,
+  }) {
+    _lines[lang]!.add(ConsoleLine(text, stream, notice: notice));
     notifyListeners();
   }
 

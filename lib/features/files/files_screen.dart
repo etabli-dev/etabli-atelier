@@ -4,13 +4,17 @@
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 import 'package:share_plus/share_plus.dart';
 
 import '../../app/app_providers.dart';
 import '../../data/settings_store.dart';
 import '../../fs/workspace_controller.dart';
 import '../../fs/workspace_store.dart';
+import '../../fs/workspace_error_text.dart';
 import '../../fs/workspace_export.dart';
+import '../../kernel/kernel_messages.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/coder_theme_atelier.dart';
 
 class FilesScreen extends ConsumerStatefulWidget {
@@ -33,6 +37,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
 
   Future<String?> _promptName(String title, {String initial = ''}) {
     final TextEditingController c = TextEditingController(text: initial);
+    final AppLocalizations l = context.l10n;
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -40,17 +45,17 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
         content: TextField(
           controller: c,
           autofocus: true,
-          decoration: const InputDecoration(hintText: 'name'),
+          decoration: InputDecoration(hintText: l.filesNameHint),
           onSubmitted: (v) => Navigator.pop(ctx, v.trim()),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel, maxLines: 1, softWrap: false),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, c.text.trim()),
-            child: const Text('OK'),
+            child: Text(l.commonOk, maxLines: 1, softWrap: false),
           ),
         ],
       ),
@@ -58,14 +63,14 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   }
 
   Future<void> _newFile() async {
-    final String? name = await _promptName('New file');
+    final String? name = await _promptName(context.l10n.filesNewFile);
     if (name != null && name.isNotEmpty) {
       await _guard(() => _ws.createFile(name));
     }
   }
 
   Future<void> _newFolder() async {
-    final String? name = await _promptName('New folder');
+    final String? name = await _promptName(context.l10n.filesNewFolder);
     if (name != null && name.isNotEmpty) {
       await _guard(() => _ws.createDir(name));
     }
@@ -95,7 +100,10 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   });
 
   Future<void> _rename(WorkspaceEntry e) async {
-    final String? name = await _promptName('Rename', initial: e.name);
+    final String? name = await _promptName(
+      context.l10n.filesRename,
+      initial: e.name,
+    );
     if (name != null && name.isNotEmpty && name != e.name) {
       await _guard(() => _ws.rename(e.relPath, name));
     }
@@ -106,11 +114,12 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
         .folderTargets()
         .where((t) => t != e.relPath && !t.startsWith('${e.relPath}/'))
         .toList();
+    final AppLocalizations l = context.l10n;
     final String? dest = await showDialog<String>(
       context: context,
       builder: (ctx) => SimpleDialog(
         title: Text(
-          'Move "${e.name}" to…',
+          l.filesMoveTitle(e.name),
           style: Theme.of(ctx).textTheme.titleSmall,
         ),
         children: [
@@ -118,7 +127,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
             SimpleDialogOption(
               onPressed: () => Navigator.pop(ctx, t),
               child: Text(
-                t.isEmpty ? '/ (workspace root)' : '/$t',
+                t.isEmpty ? l.filesWorkspaceRoot : '/$t',
                 style: Theme.of(ctx).textTheme.bodyMedium,
               ),
             ),
@@ -129,31 +138,32 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   }
 
   Future<void> _delete(WorkspaceEntry e) async {
+    final AppLocalizations l = context.l10n;
+    final AtelierColors c = AtelierColors.of(context);
     final bool ok =
         await showDialog<bool>(
           context: context,
           builder: (ctx) => AlertDialog(
             title: Text(
-              'Delete "${e.name}"?',
+              l.filesDeleteTitle(e.name),
               style: Theme.of(ctx).textTheme.titleSmall,
             ),
             content: Text(
-              e.isDir
-                  ? 'The folder and all its contents will be removed.'
-                  : 'This file will be removed.',
+              e.isDir ? l.filesDeleteFolderBody : l.filesDeleteFileBody,
               style: Theme.of(ctx).textTheme.bodySmall,
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancel'),
+                child: Text(l.commonCancel, maxLines: 1, softWrap: false),
               ),
               FilledButton(
                 style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.danger,
+                  backgroundColor: c.danger,
+                  foregroundColor: c.onAccent,
                 ),
                 onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Delete'),
+                child: Text(l.commonDelete, maxLines: 1, softWrap: false),
               ),
             ],
           ),
@@ -173,9 +183,9 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
       await action();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(describeWorkspaceError(e, context.l10n))),
+        );
       }
     }
   }
@@ -184,6 +194,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
   Widget build(BuildContext context) {
     final WorkspaceController ws = ref.watch(workspaceControllerProvider);
     final KernelLanguage lang = ref.watch(activeKernelProvider);
+    final AppLocalizations l = context.l10n;
 
     return ListenableBuilder(
       listenable: ws,
@@ -196,14 +207,14 @@ class _FilesScreenState extends ConsumerState<FilesScreen> {
               onNewFolder: _newFolder,
               onImport: _import,
               onPull: () => _guard(() => ws.pullFromKernel(lang)),
-              pullLabel: lang == KernelLanguage.r ? 'R' : 'Python',
+              pullLabel: kernelLabel(lang),
             ),
             const Divider(height: 1),
             Expanded(
               child: ws.entries.isEmpty
                   ? Center(
                       child: Text(
-                        'Workspace is empty.\nCreate or import a file.',
+                        l.filesEmpty,
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
@@ -246,6 +257,7 @@ class _Toolbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
@@ -254,17 +266,17 @@ class _Toolbar extends StatelessWidget {
       child: Row(
         children: [
           IconButton(
-            tooltip: 'New file',
+            tooltip: l.filesNewFile,
             icon: const Icon(Icons.note_add_outlined, size: 20),
             onPressed: onNewFile,
           ),
           IconButton(
-            tooltip: 'New folder',
+            tooltip: l.filesNewFolder,
             icon: const Icon(Icons.create_new_folder_outlined, size: 20),
             onPressed: onNewFolder,
           ),
           IconButton(
-            tooltip: 'Import from device',
+            tooltip: l.filesImport,
             icon: const Icon(Icons.file_download_outlined, size: 20),
             onPressed: onImport,
           ),
@@ -278,10 +290,13 @@ class _Toolbar extends StatelessWidget {
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
             ),
-          TextButton.icon(
-            onPressed: onPull,
-            icon: const Icon(Icons.sync, size: 16),
-            label: Text('Pull from $pullLabel'),
+          Tooltip(
+            message: l.filesPullTooltip(pullLabel),
+            child: TextButton.icon(
+              onPressed: onPull,
+              icon: const Icon(Icons.sync, size: 16),
+              label: Text(l.filesPull(pullLabel), maxLines: 1, softWrap: false),
+            ),
           ),
         ],
       ),
@@ -306,15 +321,18 @@ class _EntryTile extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onExport;
 
-  String _humanSize(int bytes) {
+  static String _humanSize(int bytes, String locale) {
+    final NumberFormat one = NumberFormat('0.0', locale);
     if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (bytes < 1024 * 1024) return '${one.format(bytes / 1024)} KB';
+    return '${one.format(bytes / (1024 * 1024))} MB';
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme t = Theme.of(context).textTheme;
+    final AtelierColors c = AtelierColors.of(context);
+    final AppLocalizations l = context.l10n;
     return InkWell(
       onTap: entry.isDir ? null : onOpen,
       child: Padding(
@@ -329,12 +347,14 @@ class _EntryTile extends StatelessWidget {
             Icon(
               entry.isDir ? Icons.folder_outlined : Icons.description_outlined,
               size: 18,
-              color: entry.isDir ? AppColors.accent : t.bodyMedium?.color,
+              color: entry.isDir ? c.accent : t.bodyMedium?.color,
             ),
             const SizedBox(width: AppSpacing.sm),
             Expanded(child: Text(entry.name, style: t.bodyMedium)),
-            if (!entry.isDir) Text(_humanSize(entry.size), style: t.bodySmall),
+            if (!entry.isDir)
+              Text(_humanSize(entry.size, l.localeName), style: t.bodySmall),
             PopupMenuButton<String>(
+              tooltip: l.filesActions(entry.name),
               icon: const Icon(Icons.more_vert, size: 18),
               onSelected: (v) => switch (v) {
                 'rename' => onRename(),
@@ -345,13 +365,22 @@ class _EntryTile extends StatelessWidget {
               },
               itemBuilder: (ctx) => [
                 if (!entry.isDir)
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'export',
-                    child: Text('Share / save a copy…'),
+                    child: Text(l.filesShare, maxLines: 1, softWrap: false),
                   ),
-                PopupMenuItem(value: 'rename', child: Text('Rename')),
-                PopupMenuItem(value: 'move', child: Text('Move…')),
-                PopupMenuItem(value: 'delete', child: Text('Delete')),
+                PopupMenuItem(
+                  value: 'rename',
+                  child: Text(l.filesRename, maxLines: 1, softWrap: false),
+                ),
+                PopupMenuItem(
+                  value: 'move',
+                  child: Text(l.filesMove, maxLines: 1, softWrap: false),
+                ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Text(l.commonDelete, maxLines: 1, softWrap: false),
+                ),
               ],
             ),
           ],

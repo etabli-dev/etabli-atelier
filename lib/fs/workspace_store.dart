@@ -19,6 +19,28 @@ import 'package:path_provider/path_provider.dart';
 /// Where the workspace is mounted inside each kernel's virtual filesystem.
 const String kKernelWorkspaceRoot = '/workspace';
 
+/// Why a workspace operation was refused; the UI shows a localized message for each.
+enum WorkspaceErrorKind {
+  invalidPath,
+  invalidName,
+  moveIntoItself,
+  exists,
+  symlink,
+}
+
+/// A refused path or name (still an [ArgumentError]).
+class WorkspaceArgumentError extends ArgumentError {
+  WorkspaceArgumentError(this.kind, String value, String message)
+    : super.value(value, 'path', message);
+  final WorkspaceErrorKind kind;
+}
+
+/// A refused file-system change (still a [FileSystemException]).
+class WorkspaceFileError extends FileSystemException {
+  const WorkspaceFileError(this.kind, super.message, super.path);
+  final WorkspaceErrorKind kind;
+}
+
 class WorkspaceEntry {
   const WorkspaceEntry({
     required this.relPath,
@@ -102,9 +124,9 @@ plt.show()
         rel
             .split('/')
             .any((part) => part.isEmpty || part == '.' || part == '..')) {
-      throw ArgumentError.value(
+      throw WorkspaceArgumentError(
+        WorkspaceErrorKind.invalidPath,
         rel,
-        'path',
         'Expected a relative workspace path',
       );
     }
@@ -113,7 +135,11 @@ plt.show()
       current = p.join(current, part);
       if (FileSystemEntity.typeSync(current, followLinks: false) ==
           FileSystemEntityType.link) {
-        throw FileSystemException('Workspace symlinks are not supported', rel);
+        throw WorkspaceFileError(
+          WorkspaceErrorKind.symlink,
+          'Workspace symlinks are not supported',
+          rel,
+        );
       }
     }
     return p.normalize(p.join(root.path, _toNative(rel)));
@@ -184,7 +210,11 @@ plt.show()
 
   Future<void> rename(String rel, String newName) async {
     if (!_isValidName(newName)) {
-      throw ArgumentError('Invalid name: $newName');
+      throw WorkspaceArgumentError(
+        WorkspaceErrorKind.invalidName,
+        newName,
+        'Invalid name',
+      );
     }
     final String parent = p.posix.dirname(rel);
     final String dest = parent == '.' ? newName : '$parent/$newName';
@@ -203,10 +233,18 @@ plt.show()
     final destAbs = _abs(destRel);
     if (srcAbs == destAbs) return;
     if (p.isWithin(srcAbs, destAbs)) {
-      throw ArgumentError('Cannot move a folder into itself');
+      throw WorkspaceArgumentError(
+        WorkspaceErrorKind.moveIntoItself,
+        rel,
+        'Cannot move a folder into itself',
+      );
     }
     if (await _entityType(destAbs) != FileSystemEntityType.notFound) {
-      throw FileSystemException('Destination already exists', destRel);
+      throw WorkspaceFileError(
+        WorkspaceErrorKind.exists,
+        'Destination already exists',
+        destRel,
+      );
     }
     final FileSystemEntity src =
         await _entityType(srcAbs) == FileSystemEntityType.directory
@@ -252,7 +290,11 @@ plt.show()
     final String destRel = destDirRel.isEmpty ? name : '$destDirRel/$name';
     final File dest = File(_abs(destRel));
     if (await _entityType(dest.path) != FileSystemEntityType.notFound) {
-      throw FileSystemException('Destination already exists', destRel);
+      throw WorkspaceFileError(
+        WorkspaceErrorKind.exists,
+        'Destination already exists',
+        destRel,
+      );
     }
     await dest.parent.create(recursive: true);
     await File(sourcePath).copy(dest.path);

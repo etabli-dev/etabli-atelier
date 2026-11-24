@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/app_providers.dart';
 import '../../data/settings_store.dart';
 import '../../kernel/kernel_controller.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/coder_theme_atelier.dart';
 
 class PlotsScreen extends ConsumerWidget {
@@ -40,10 +41,8 @@ class PlotsScreen extends ConsumerWidget {
                       itemCount: plots.length,
                       separatorBuilder: (_, _) =>
                           const SizedBox(height: AppSpacing.md),
-                      itemBuilder: (context, i) => _PlotCard(
-                        bytes: plots[i],
-                        index: i + 1,
-                      ),
+                      itemBuilder: (context, i) =>
+                          _PlotCard(bytes: plots[i], index: i + 1),
                     ),
             ),
           ],
@@ -67,17 +66,26 @@ class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme t = Theme.of(context).textTheme;
-    final String src =
-        language == KernelLanguage.r ? 'ggplot2 / base R' : 'matplotlib';
+    final String src = language == KernelLanguage.r
+        ? 'ggplot2 / base R'
+        : 'matplotlib';
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md, vertical: AppSpacing.sm),
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
       child: Row(
         children: [
-          Text('$src  ·  $count', style: t.labelMedium),
-          const Spacer(),
+          Expanded(
+            child: Text(
+              '$src  ·  $count',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: t.labelMedium,
+            ),
+          ),
           IconButton(
-            tooltip: 'Clear plots',
+            tooltip: context.l10n.plotsClear,
             icon: const Icon(Icons.cleaning_services_outlined, size: 18),
             onPressed: onClear,
           ),
@@ -100,12 +108,16 @@ class _PlotCard extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(AppSpacing.sm),
-            child: Text('Plot $index',
-                style: Theme.of(context).textTheme.bodySmall),
+            child: Text(
+              context.l10n.plotsItem('$index'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
           const Divider(height: 1),
           ClipRRect(
-            borderRadius: const BorderRadius.vertical(bottom: AppRadius.mdRadius),
+            borderRadius: const BorderRadius.vertical(
+              bottom: AppRadius.mdRadius,
+            ),
             child: Container(
               color: Colors.white,
               padding: const EdgeInsets.all(AppSpacing.sm),
@@ -127,24 +139,24 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations l = context.l10n;
+    final AtelierColors c = AtelierColors.of(context);
+    final TextTheme t = Theme.of(context).textTheme;
+    // The code examples are verbatim; only the prose around them is translated.
     final String hint = language == KernelLanguage.r
-        ? 'Run R plotting code — e.g.\nplot(mtcars\$wt, mtcars\$mpg)\n\n(ggplot2 works once installed via Packages)'
-        : 'Run matplotlib code — e.g.\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3]); plt.title("demo")';
+        ? '${l.plotsHintR}\nplot(mtcars\$wt, mtcars\$mpg)\n\n${l.plotsHintGgplot}'
+        : '${l.plotsHintPython}\nimport matplotlib.pyplot as plt\nplt.plot([1, 2, 3]); plt.title("demo")';
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.insert_chart_outlined,
-                size: 40, color: AppColors.accent),
+            Icon(Icons.insert_chart_outlined, size: 40, color: c.accent),
             const SizedBox(height: AppSpacing.md),
-            Text('No plots yet',
-                style: Theme.of(context).textTheme.titleSmall),
+            Text(l.plotsEmpty, style: t.titleSmall),
             const SizedBox(height: AppSpacing.sm),
-            Text(hint,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall),
+            Text(hint, textAlign: TextAlign.center, style: t.bodySmall),
           ],
         ),
       ),

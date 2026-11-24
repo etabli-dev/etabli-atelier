@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/app_providers.dart';
 import '../../data/settings_store.dart';
 import '../../kernel/kernel_controller.dart';
+import '../../kernel/kernel_messages.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/coder_theme_atelier.dart';
 
 class ConsoleScreen extends ConsumerStatefulWidget {
@@ -57,15 +59,18 @@ class _ConsoleScreenState extends ConsumerState<ConsoleScreen> {
       builder: (context, _) {
         _scrollToBottom();
         final KernelState state = kernel.stateFor(lang);
+        final AppLocalizations l = context.l10n;
         return Column(
           children: [
             _StatusBar(state: state, language: lang, kernel: kernel),
             const Divider(height: 1),
             Expanded(
               child: _OutputView(
-                  scroll: _scroll,
-                  lines: kernel.linesFor(lang),
-                  fontSize: fontSize),
+                scroll: _scroll,
+                lines: kernel.linesFor(lang),
+                language: lang,
+                fontSize: fontSize,
+              ),
             ),
             const Divider(height: 1),
             _InputBar(
@@ -74,9 +79,11 @@ class _ConsoleScreenState extends ConsumerState<ConsoleScreen> {
               enabled: state == KernelState.ready,
               hint: enabled(state)
                   ? (lang == KernelLanguage.r
-                      ? 'Enter R expression…'
-                      : 'Enter Python statement…')
-                  : 'Kernel not ready',
+                        ? l.consoleHintR
+                        : l.consoleHintPython)
+                  : l.consoleNotReady,
+              label: l.consoleInputLabel(kernelLabel(lang)),
+              runLabel: l.commonRun,
               onSubmit: () => _submit(kernel, lang),
             ),
           ],
@@ -102,14 +109,17 @@ class _StatusBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme t = Theme.of(context).textTheme;
+    final AtelierColors c = AtelierColors.of(context);
+    final AppLocalizations l = context.l10n;
     final (Color color, String label) = switch (state) {
-      KernelState.idle => (AppColors.darkTextMuted, 'idle'),
-      KernelState.loading => (AppColors.warning, 'loading…'),
-      KernelState.ready => (AppColors.accent, 'ready'),
-      KernelState.error => (AppColors.danger, 'error'),
+      KernelState.idle => (c.textMuted, l.kernelStateIdle),
+      KernelState.loading => (c.warning, l.kernelStateLoading),
+      KernelState.ready => (c.success, l.kernelStateReady),
+      KernelState.error => (c.danger, l.kernelStateError),
     };
-    final String name =
-        language == KernelLanguage.r ? 'R · WebR' : 'Python · Pyodide';
+    final String name = language == KernelLanguage.r
+        ? 'R · WebR'
+        : 'Python · Pyodide';
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -119,17 +129,23 @@ class _StatusBar extends StatelessWidget {
         children: [
           Icon(Icons.circle, size: 9, color: color),
           const SizedBox(width: AppSpacing.sm),
-          Text('$name  $label', style: t.labelMedium),
-          const Spacer(),
+          Expanded(
+            child: Text(
+              '$name  $label',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: t.labelMedium,
+            ),
+          ),
           IconButton(
-            tooltip: 'Clear console',
+            tooltip: l.consoleClear,
             icon: const Icon(Icons.cleaning_services_outlined, size: 18),
             onPressed: () => kernel.clear(language),
           ),
           IconButton(
             tooltip: language == KernelLanguage.r
-                ? 'Force-restart R kernel'
-                : 'Force-restart (reloads kernel host)',
+                ? l.consoleRestartR
+                : l.consoleRestartPython,
             icon: const Icon(Icons.restart_alt, size: 18),
             onPressed: () => kernel.restart(language),
           ),
@@ -143,52 +159,59 @@ class _OutputView extends StatelessWidget {
   const _OutputView({
     required this.scroll,
     required this.lines,
+    required this.language,
     required this.fontSize,
   });
   final ScrollController scroll;
   final List<ConsoleLine> lines;
+  final KernelLanguage language;
   final double fontSize;
 
   @override
   Widget build(BuildContext context) {
     if (lines.isEmpty) {
       return Center(
-        child: Text('Booting kernel…',
-            style: Theme.of(context).textTheme.bodySmall),
+        child: Text(
+          context.l10n.consoleBooting,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
       );
     }
     return ListView.builder(
       controller: scroll,
       padding: const EdgeInsets.all(AppSpacing.md),
       itemCount: lines.length,
-      itemBuilder: (context, i) => _LineView(line: lines[i], fontSize: fontSize),
+      itemBuilder: (context, i) =>
+          _LineView(line: lines[i], language: language, fontSize: fontSize),
     );
   }
 }
 
 class _LineView extends StatelessWidget {
-  const _LineView({required this.line, required this.fontSize});
+  const _LineView({
+    required this.line,
+    required this.language,
+    required this.fontSize,
+  });
   final ConsoleLine line;
+  final KernelLanguage language;
   final double fontSize;
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color base = isDark ? AppColors.darkText : AppColors.lightText;
-    final Color muted =
-        isDark ? AppColors.darkTextMuted : AppColors.lightTextMuted;
+    final AtelierColors c = AtelierColors.of(context);
     final Color color = switch (line.stream) {
-      ConsoleStream.stdout => base,
-      ConsoleStream.stderr => AppColors.danger,
-      ConsoleStream.input => AppColors.accent,
-      ConsoleStream.prompt => muted,
-      ConsoleStream.system => muted,
+      ConsoleStream.stdout => c.text,
+      ConsoleStream.stderr => c.danger,
+      ConsoleStream.input => c.accent,
+      ConsoleStream.prompt => c.textMuted,
+      ConsoleStream.system => c.textMuted,
     };
     final String prefix = line.stream == ConsoleStream.input ? '> ' : '';
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: SelectableText(
-        '$prefix${line.text}',
+        '$prefix${line.display(context.l10n, language)}',
         style: TextStyle(
           fontFamily: AppFonts.mono,
           fontFamilyFallback: AppFonts.monoFallback,
@@ -210,6 +233,8 @@ class _InputBar extends StatelessWidget {
     required this.focus,
     required this.enabled,
     required this.hint,
+    required this.label,
+    required this.runLabel,
     required this.onSubmit,
   });
 
@@ -217,6 +242,8 @@ class _InputBar extends StatelessWidget {
   final FocusNode focus;
   final bool enabled;
   final String hint;
+  final String label;
+  final String runLabel;
   final VoidCallback onSubmit;
 
   @override
@@ -227,35 +254,43 @@ class _InputBar extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(right: AppSpacing.sm),
-            child: Text('>',
+            child: ExcludeSemantics(
+              child: Text(
+                '>',
                 style: TextStyle(
                   fontFamily: AppFonts.mono,
-                  color: AppColors.accent,
+                  color: AtelierColors.of(context).accent,
                   fontSize: 15,
-                )),
+                ),
+              ),
+            ),
           ),
           Expanded(
-            child: CallbackShortcuts(
-              bindings: {
-                const SingleActivator(LogicalKeyboardKey.enter):
-                    enabled ? onSubmit : () {},
-              },
-              child: TextField(
-                controller: controller,
-                focusNode: focus,
-                enabled: enabled,
-                autofocus: false,
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => onSubmit(),
-                style: Theme.of(context).textTheme.bodyMedium,
-                decoration: InputDecoration(isDense: true, hintText: hint),
+            child: Semantics(
+              label: label,
+              child: CallbackShortcuts(
+                bindings: {
+                  const SingleActivator(LogicalKeyboardKey.enter): enabled
+                      ? onSubmit
+                      : () {},
+                },
+                child: TextField(
+                  controller: controller,
+                  focusNode: focus,
+                  enabled: enabled,
+                  autofocus: false,
+                  textInputAction: TextInputAction.send,
+                  onSubmitted: (_) => onSubmit(),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  decoration: InputDecoration(isDense: true, hintText: hint),
+                ),
               ),
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
           FilledButton(
             onPressed: enabled ? onSubmit : null,
-            child: const Text('Run'),
+            child: Text(runLabel, maxLines: 1, softWrap: false),
           ),
         ],
       ),

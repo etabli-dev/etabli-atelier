@@ -3,11 +3,12 @@
 
 // Lightweight settings persistence backed by Hive.
 //
-// Holds non-secret app preferences (theme, font size, default kernel). Secrets
+// Holds non-secret app preferences (appearance, app language, font size, default kernel). Secrets
 // live in flutter_secure_storage instead — see SecretStore (added later).
 
-import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+import '../theme/appearance.dart';
 
 /// The language a session/file is bound to. Two separate kernels — no interop.
 enum KernelLanguage { r, python }
@@ -15,8 +16,14 @@ enum KernelLanguage { r, python }
 class SettingsStore {
   SettingsStore._(this._box);
 
+  /// A store over an already opened box (tests).
+  SettingsStore.withBox(this._box);
+
   static const String _boxName = 'settings';
-  static const String _kThemeMode = 'themeMode';
+
+  /// The earlier Auto/Light/Dark key of this app; its values ("system", "light", "dark") are the same as
+  /// [AppearanceMode]'s raw values.
+  static const String legacyThemeModeKey = 'themeMode';
   static const String _kFontSize = 'fontSize';
   static const String _kDefaultKernel = 'defaultKernel';
 
@@ -24,20 +31,38 @@ class SettingsStore {
 
   static Future<SettingsStore> open() async {
     final Box box = await Hive.openBox(_boxName);
-    return SettingsStore._(box);
+    final SettingsStore store = SettingsStore._(box);
+    await store.migrateLegacyMode();
+    return store;
   }
 
-  ThemeMode get themeMode {
-    final String? raw = _box.get(_kThemeMode) as String?;
-    return switch (raw) {
-      'light' => ThemeMode.light,
-      'dark' => ThemeMode.dark,
-      _ => ThemeMode.system,
-    };
+  /// Moves a mode saved under the earlier key to [AppearanceKeys.mode] once; a value already there wins.
+  Future<void> migrateLegacyMode() async {
+    final Object? legacy = _box.get(legacyThemeModeKey);
+    if (legacy == null) return;
+    if (_box.get(AppearanceKeys.mode) == null) {
+      await _box.put(
+        AppearanceKeys.mode,
+        AppearanceMode.fromStored(legacy).name,
+      );
+    }
+    await _box.delete(legacyThemeModeKey);
   }
 
-  Future<void> setThemeMode(ThemeMode mode) =>
-      _box.put(_kThemeMode, mode.name);
+  AppearanceMode get appearanceMode =>
+      AppearanceMode.fromStored(_box.get(AppearanceKeys.mode));
+  Future<void> setAppearanceMode(AppearanceMode mode) =>
+      _box.put(AppearanceKeys.mode, mode.name);
+
+  AccentChoice get accent =>
+      AccentChoice.fromStored(_box.get(AppearanceKeys.accent));
+  Future<void> setAccent(AccentChoice accent) =>
+      _box.put(AppearanceKeys.accent, accent.name);
+
+  AppLanguage get language =>
+      AppLanguage.fromStored(_box.get(AppearanceKeys.language));
+  Future<void> setLanguage(AppLanguage language) =>
+      _box.put(AppearanceKeys.language, language.name);
 
   double get fontSize => (_box.get(_kFontSize) as num?)?.toDouble() ?? 14.0;
   Future<void> setFontSize(double size) => _box.put(_kFontSize, size);

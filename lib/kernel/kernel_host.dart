@@ -58,7 +58,8 @@ class _KernelHostState extends ConsumerState<KernelHost> {
           'payload': {
             'kernel': 'host',
             'state': 'error',
-            'message': 'Could not start the local runtime: $e',
+            'code': 'serverStartFailed',
+            'message': '$e',
           },
         });
       }

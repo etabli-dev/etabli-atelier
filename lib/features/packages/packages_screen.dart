@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app/app_providers.dart';
 import '../../data/settings_store.dart';
 import '../../kernel/kernel_controller.dart';
+import '../../kernel/kernel_messages.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/coder_theme_atelier.dart';
 
 class PackagesScreen extends ConsumerStatefulWidget {
@@ -44,6 +46,8 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
     final KernelController kernel = ref.watch(kernelControllerProvider);
     final KernelLanguage lang = ref.watch(activeKernelProvider);
     final TextTheme t = Theme.of(context).textTheme;
+    final AtelierColors c = AtelierColors.of(context);
+    final AppLocalizations l = context.l10n;
 
     return ListenableBuilder(
       listenable: kernel,
@@ -52,8 +56,8 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
         final bool busy = kernel.installing;
         final List<PackageResult> log = kernel.packageLogFor(lang);
         final String source = lang == KernelLanguage.r
-            ? 'repo.r-wasm.org (WebR WASM binaries)'
-            : 'PyPI via micropip (pure-Python & WASM wheels)';
+            ? l.packagesSourceR
+            : l.packagesSourcePython;
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,22 +68,20 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lang == KernelLanguage.r ? 'R packages' : 'Python packages',
+                    lang == KernelLanguage.r
+                        ? l.packagesTitleR
+                        : l.packagesTitlePython,
                     style: t.titleSmall,
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Text('Source: $source', style: t.bodySmall),
+                  Text(l.packagesSource(source), style: t.bodySmall),
                   const SizedBox(height: AppSpacing.xs),
                   Row(
                     children: [
-                      const Icon(Icons.wifi, size: 13, color: AppColors.warning),
+                      Icon(Icons.wifi, size: 13, color: c.warning),
                       const SizedBox(width: AppSpacing.xs),
                       Expanded(
-                        child: Text(
-                          'Installing requires a network connection. '
-                          'Bundled packages already work offline.',
-                          style: t.bodySmall,
-                        ),
+                        child: Text(l.packagesNetwork, style: t.bodySmall),
                       ),
                     ],
                   ),
@@ -95,8 +97,8 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
                           decoration: InputDecoration(
                             isDense: true,
                             hintText: lang == KernelLanguage.r
-                                ? 'e.g. ggplot2, jsonlite'
-                                : 'e.g. requests, sympy',
+                                ? l.packagesHintR
+                                : l.packagesHintPython,
                           ),
                         ),
                       ),
@@ -107,10 +109,16 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
                             ? const SizedBox(
                                 width: 14,
                                 height: 14,
-                                child:
-                                    CircularProgressIndicator(strokeWidth: 2))
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
                             : const Icon(Icons.download, size: 18),
-                        label: const Text('Install'),
+                        label: Text(
+                          l.packagesInstall,
+                          maxLines: 1,
+                          softWrap: false,
+                        ),
                       ),
                     ],
                   ),
@@ -118,8 +126,8 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: AppSpacing.sm),
                       child: Text(
-                        'Switch to and start the ${lang == KernelLanguage.r ? 'R' : 'Python'} kernel first (Console tab).',
-                        style: t.bodySmall?.copyWith(color: AppColors.warning),
+                        l.packagesStartFirst(kernelLabel(lang)),
+                        style: t.bodySmall?.copyWith(color: c.warning),
                       ),
                     ),
                 ],
@@ -128,10 +136,7 @@ class _PackagesScreenState extends ConsumerState<PackagesScreen> {
             const Divider(height: 1),
             Expanded(
               child: log.isEmpty
-                  ? Center(
-                      child: Text('No installations yet.',
-                          style: t.bodySmall),
-                    )
+                  ? Center(child: Text(l.packagesNone, style: t.bodySmall))
                   : ListView.builder(
                       reverse: true,
                       padding: const EdgeInsets.all(AppSpacing.sm),
@@ -154,15 +159,18 @@ class _LogTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme t = Theme.of(context).textTheme;
-    final bool pending = result.message.startsWith('Installing');
+    final AtelierColors c = AtelierColors.of(context);
+    final bool pending = result.pending;
     final (IconData icon, Color color) = pending
-        ? (Icons.hourglass_empty, AppColors.warning)
+        ? (Icons.hourglass_empty, c.warning)
         : result.ok
-            ? (Icons.check_circle_outline, AppColors.accent)
-            : (Icons.error_outline, AppColors.danger);
+        ? (Icons.check_circle_outline, c.success)
+        : (Icons.error_outline, c.danger);
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm, vertical: 4),
+        horizontal: AppSpacing.sm,
+        vertical: 4,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -173,9 +181,12 @@ class _LogTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(result.name, style: t.labelMedium),
-                Text(result.message,
-                    style: t.bodySmall?.copyWith(
-                        color: result.ok || pending ? null : AppColors.danger)),
+                Text(
+                  result.display(context.l10n),
+                  style: t.bodySmall?.copyWith(
+                    color: result.ok ? null : c.danger,
+                  ),
+                ),
               ],
             ),
           ),

@@ -28,15 +28,11 @@ class PanePlaceholder extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 40, color: AppColors.accent),
+            Icon(icon, size: 40, color: AtelierColors.of(context).accent),
             const SizedBox(height: AppSpacing.md),
             Text(title, style: t.titleMedium),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-              subtitle,
-              textAlign: TextAlign.center,
-              style: t.bodySmall,
-            ),
+            Text(subtitle, textAlign: TextAlign.center, style: t.bodySmall),
           ],
         ),
       ),

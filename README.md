@@ -25,6 +25,14 @@ WebR and Pyodide directly, so no desktop application is planned. The
 layout, signing, store and F-Droid steps, and a recommendation for the unused desktop
 runner folders.
 
+## Appearance and language
+
+Settings → Appearance sets the app language (System, Deutsch, English), the mode (System, Light, Dark)
+and an accent colour (Coder blue, Green, Yellow, Orange, Red, Purple, Graphite), as in every Établi app.
+All three apply at once. The neutrals are the Hugo Coder palette; the yellow and orange accents keep
+selection fills neutral grey. Every screen, dialog, error and accessibility label is in English and German;
+other device languages fall back to English. Changes are listed in [CHANGELOG.md](CHANGELOG.md).
+
 ## Privacy
 
 The bundled examples and runtimes work without an external connection. No analytics or account service is configured. Imported code runs with WebView capabilities and can request network resources; it is not an isolated sandbox for untrusted programs. Workspaces and imported sources are stored locally and may be included in platform backups. Dependencies and runtime notices are listed in THIRD_PARTY.md.

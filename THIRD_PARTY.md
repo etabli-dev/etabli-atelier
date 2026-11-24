@@ -7,6 +7,7 @@ The application source is AGPL-3.0-only (commercial licences available from the 
 | WebR | 0.6.0 (R 4.6.0 observed in the runtime) | [Source tag](https://github.com/r-wasm/webr/tree/v0.6.0), [binary GPL-3.0 and other components](https://github.com/r-wasm/webr/blob/v0.6.0/LICENSE.md) |
 | shinylive | 0.10.12 | [Source tag](https://github.com/posit-dev/shinylive/tree/v0.10.12), MIT; bundled R packages retain their licenses |
 | Pyodide | 0.27.7 (Python 3.12.7) | [Source tag](https://github.com/pyodide/pyodide/tree/0.27.7), MPL-2.0; Python and wheels retain their licenses |
+| JetBrains Mono (bundled UI font) | 2.305 (Regular, Medium, SemiBold, Bold in `assets/fonts/`) | [Source](https://github.com/JetBrains/JetBrainsMono), SIL OFL-1.1; the copyright and licence notice are embedded in each font file |
 
 `tool/runtimes.lock.json` records canonical download URLs and SHA-256 digests. Inputs are WebR's official zip and Posit's official shinylive tarball; the latter includes both its R engine and Pyodide distribution. The fetcher verifies every input before writing application assets and writes a per-file receipt to ignored `tool/runtimes.prepared.json`. `--offline` requires a previously verified cache and makes no download request. Corrupt cached inputs fail without replacing application assets.
 

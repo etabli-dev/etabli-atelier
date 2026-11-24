@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/settings_store.dart';
+import '../l10n/l10n.dart';
 import '../theme/coder_theme_atelier.dart';
 import 'app_providers.dart';
 import '../features/files/files_screen.dart';
@@ -18,28 +19,51 @@ import '../features/packages/packages_screen.dart';
 import '../features/settings/settings_screen.dart';
 
 class _Destination {
-  const _Destination(this.label, this.icon, this.builder);
-  final String label;
+  const _Destination(this.label, this.title, this.icon, this.builder);
+
+  /// The short tab label (fits a 375-pt phone in every language).
+  final String Function(AppLocalizations) label;
+
+  /// The full pane title, also the tab's tooltip and accessibility label.
+  final String Function(AppLocalizations) title;
   final IconData icon;
   final WidgetBuilder builder;
 }
 
 final List<_Destination> _destinations = <_Destination>[
-  _Destination('Files', Icons.folder_outlined, (_) => const FilesScreen()),
-  _Destination('Editor', Icons.code, (_) => const EditorScreen()),
-  _Destination('Console', Icons.terminal, (_) => const ConsoleScreen()),
   _Destination(
-    'Plots',
+    (l) => l.navFiles,
+    (l) => l.navFiles,
+    Icons.folder_outlined,
+    (_) => const FilesScreen(),
+  ),
+  _Destination(
+    (l) => l.navEditor,
+    (l) => l.navEditor,
+    Icons.code,
+    (_) => const EditorScreen(),
+  ),
+  _Destination(
+    (l) => l.navConsole,
+    (l) => l.navConsole,
+    Icons.terminal,
+    (_) => const ConsoleScreen(),
+  ),
+  _Destination(
+    (l) => l.navPlots,
+    (l) => l.navPlots,
     Icons.insert_chart_outlined,
     (_) => const PlotsScreen(),
   ),
   _Destination(
-    'Packages',
+    (l) => l.navPackages,
+    (l) => l.navPackages,
     Icons.widgets_outlined,
     (_) => const PackagesScreen(),
   ),
   _Destination(
-    'Settings',
+    (l) => l.navSettings,
+    (l) => l.settingsTitle,
     Icons.settings_outlined,
     (_) => const SettingsScreen(),
   ),
@@ -54,6 +78,7 @@ class AppShell extends ConsumerWidget {
     final int index = ref.watch(navIndexProvider);
     void select(int i) => ref.read(navIndexProvider.notifier).set(i);
     final _Destination dest = _destinations[index];
+    final AppLocalizations l = context.l10n;
 
     // Inset below the status bar (and notches). The bottom is handled by the
     // navigation bar / its own safe area, so don't pad it here.
@@ -61,7 +86,7 @@ class AppShell extends ConsumerWidget {
       bottom: false,
       child: Column(
         children: [
-          _TopBar(title: dest.label),
+          _TopBar(title: dest.title(l)),
           const Divider(height: 1),
           // Retain editor and console drafts when visiting another pane.
           // In particular, the file browser must not dispose the editor before
@@ -98,8 +123,16 @@ class AppShell extends ConsumerWidget {
               destinations: [
                 for (final d in _destinations)
                   NavigationRailDestination(
-                    icon: Icon(d.icon),
-                    label: Text(d.label),
+                    icon: Tooltip(
+                      message: d.title(l),
+                      excludeFromSemantics: true,
+                      child: Icon(d.icon),
+                    ),
+                    label: Semantics(
+                      label: d.title(l),
+                      excludeSemantics: true,
+                      child: Text(d.label(l), maxLines: 1, softWrap: false),
+                    ),
                   ),
               ],
             ),
@@ -109,13 +142,36 @@ class AppShell extends ConsumerWidget {
       ),
       bottomNavigationBar: wide
           ? null
-          : NavigationBar(
-              selectedIndex: index,
-              onDestinationSelected: select,
-              destinations: [
-                for (final d in _destinations)
-                  NavigationDestination(icon: Icon(d.icon), label: d.label),
-              ],
+          : DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: AtelierColors.of(context).border),
+                ),
+              ),
+              child: NavigationBar(
+                selectedIndex: index,
+                onDestinationSelected: select,
+                destinations: [
+                  for (var i = 0; i < _destinations.length; i++)
+                    // The short tab label is shown; screen readers get the full pane title.
+                    Semantics(
+                      label: _destinations[i].title(l),
+                      hint: MaterialLocalizations.of(context).tabLabel(
+                        tabIndex: i + 1,
+                        tabCount: _destinations.length,
+                      ),
+                      button: true,
+                      selected: i == index,
+                      onTap: () => select(i),
+                      excludeSemantics: true,
+                      child: NavigationDestination(
+                        icon: Icon(_destinations[i].icon),
+                        label: _destinations[i].label(l),
+                        tooltip: _destinations[i].title(l),
+                      ),
+                    ),
+                ],
+              ),
             ),
     );
   }
@@ -134,8 +190,18 @@ class _TopBar extends ConsumerWidget {
       color: Theme.of(context).appBarTheme.backgroundColor,
       child: Row(
         children: [
-          Text(title, style: Theme.of(context).textTheme.titleMedium),
-          const Spacer(),
+          Expanded(
+            child: Semantics(
+              header: true,
+              child: Text(
+                title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sm),
           const _KernelSwitcher(),
         ],
       ),
@@ -149,6 +215,7 @@ class _KernelSwitcher extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final KernelLanguage active = ref.watch(activeKernelProvider);
+    final AppLocalizations l = context.l10n;
     return SegmentedButton<KernelLanguage>(
       showSelectedIcon: false,
       style: ButtonStyle(
@@ -157,16 +224,18 @@ class _KernelSwitcher extends ConsumerWidget {
           Theme.of(context).textTheme.labelMedium,
         ),
       ),
-      segments: const [
+      segments: [
         ButtonSegment(
           value: KernelLanguage.r,
-          label: Text('R'),
-          icon: Icon(Icons.circle, size: 10, color: AppColors.rAccent),
+          label: const Text('R', maxLines: 1, softWrap: false),
+          tooltip: l.kernelName('R'),
+          icon: const Icon(Icons.circle, size: 10, color: AppColors.rAccent),
         ),
         ButtonSegment(
           value: KernelLanguage.python,
-          label: Text('Python'),
-          icon: Icon(Icons.circle, size: 10, color: AppColors.pyAccent),
+          label: const Text('Python', maxLines: 1, softWrap: false),
+          tooltip: l.kernelName('Python'),
+          icon: const Icon(Icons.circle, size: 10, color: AppColors.pyAccent),
         ),
       ],
       selected: {active},

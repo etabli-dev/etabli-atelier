@@ -13,6 +13,8 @@ import '../../app/app_providers.dart';
 import '../../data/settings_store.dart';
 import '../../fs/workspace_controller.dart';
 import '../../kernel/kernel_controller.dart';
+import '../../kernel/kernel_messages.dart';
+import '../../l10n/l10n.dart';
 import '../../theme/coder_theme_atelier.dart';
 
 class EditorScreen extends ConsumerStatefulWidget {
@@ -118,8 +120,8 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       if (mounted) {
         setState(() {
           _failedPath = path;
-          _loadError =
-              'Could not open $path as text. The current buffer is retained.';
+          // The path that failed; the message is localized when shown.
+          _loadError = path ?? '';
         });
       }
     } finally {
@@ -138,25 +140,26 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
   }
 
   Future<_BufferChoice?> _confirmFileSwitch(String? nextPath) {
-    final current = _loadedPath ?? 'this scratch buffer';
-    final next = nextPath ?? 'a new scratch buffer';
+    final AppLocalizations l = context.l10n;
+    final current = _loadedPath ?? l.editorThisScratch;
+    final next = nextPath ?? l.editorNewScratch;
     return showDialog<_BufferChoice>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Unsaved changes'),
-        content: Text('Save changes to $current before opening $next?'),
+        title: Text(l.editorUnsavedTitle),
+        content: Text(l.editorUnsavedBody(current, next)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, _BufferChoice.cancel),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel, maxLines: 1, softWrap: false),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, _BufferChoice.discard),
-            child: const Text('Discard'),
+            child: Text(l.commonDiscard, maxLines: 1, softWrap: false),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, _BufferChoice.save),
-            child: const Text('Save'),
+            child: Text(l.commonSave, maxLines: 1, softWrap: false),
           ),
         ],
       ),
@@ -193,7 +196,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Saved $path'),
+            content: Text(context.l10n.editorSaved(path)),
             duration: const Duration(seconds: 1),
           ),
         );
@@ -202,11 +205,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Could not save $path. The editor buffer is retained.',
-            ),
-          ),
+          SnackBar(content: Text(context.l10n.editorSaveFailed(path))),
         );
       }
       return false;
@@ -214,12 +213,15 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
   }
 
   Future<String?> _promptFilename(KernelLanguage lang) {
+    final AppLocalizations l = context.l10n;
     final String ext = lang == KernelLanguage.r ? '.R' : '.py';
-    final TextEditingController c = TextEditingController(text: 'untitled$ext');
+    final TextEditingController c = TextEditingController(
+      text: '${l.editorUntitled}$ext',
+    );
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Save as', style: Theme.of(ctx).textTheme.titleSmall),
+        title: Text(l.editorSaveAs, style: Theme.of(ctx).textTheme.titleSmall),
         content: TextField(
           controller: c,
           autofocus: true,
@@ -228,11 +230,11 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l.commonCancel, maxLines: 1, softWrap: false),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, c.text.trim()),
-            child: const Text('Save'),
+            child: Text(l.commonSave, maxLines: 1, softWrap: false),
           ),
         ],
       ),
@@ -276,9 +278,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     ref.read(kernelControllerProvider).ensureStarted(lang);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          '${lang == KernelLanguage.r ? 'R' : 'Python'} kernel is still starting…',
-        ),
+        content: Text(context.l10n.editorKernelStarting(kernelLabel(lang))),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -296,11 +296,13 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
     _applyLanguage(lang);
 
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final AtelierColors c = AtelierColors.of(context);
+    final AppLocalizations l = context.l10n;
 
     return Column(
       children: [
         _EditorToolbar(
-          fileName: _loadedPath ?? 'scratch buffer',
+          fileName: _loadedPath ?? l.editorScratch,
           language: lang,
           onSave: _loading ? null : () => _save(lang),
           onRunFile: _loading ? null : () => _runFile(lang),
@@ -313,7 +315,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    _loadError!,
+                    l.editorOpenFailed(_loadError!),
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
@@ -322,7 +324,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                     _failedPath = null;
                     _loadIfNeeded(path);
                   },
-                  child: const Text('Retry'),
+                  child: Text(l.commonRetry, maxLines: 1, softWrap: false),
                 ),
               ],
             ),
@@ -344,9 +346,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                     readOnly: _loading,
                     expands: true,
                     wrap: false,
-                    background: isDark
-                        ? AppColors.darkBackground
-                        : AppColors.lightBackground,
+                    background: c.background,
                     textStyle: TextStyle(
                       fontFamily: AppFonts.mono,
                       fontFamilyFallback: AppFonts.monoFallback,
@@ -356,9 +356,7 @@ class _EditorScreenState extends ConsumerState<EditorScreen> {
                       textStyle: TextStyle(
                         fontFamily: AppFonts.mono,
                         fontSize: 13,
-                        color: isDark
-                            ? AppColors.darkTextMuted
-                            : AppColors.lightTextMuted,
+                        color: c.textMuted,
                       ),
                     ),
                   ),
@@ -394,6 +392,7 @@ class _EditorToolbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme t = Theme.of(context).textTheme;
+    final AppLocalizations l = context.l10n;
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -411,20 +410,42 @@ class _EditorToolbar extends StatelessWidget {
             ),
           ),
           IconButton(
-            tooltip: 'Save',
+            tooltip: l.commonSave,
             icon: const Icon(Icons.save_outlined, size: 18),
             onPressed: onSave,
           ),
-          TextButton.icon(
-            onPressed: onRunSelection,
-            icon: const Icon(Icons.subject, size: 16),
-            label: const Text('Selection'),
+          Tooltip(
+            message: l.editorRunSelection,
+            excludeFromSemantics: true,
+            child: Semantics(
+              label: l.editorRunSelection,
+              excludeSemantics: true,
+              button: true,
+              enabled: onRunSelection != null,
+              onTap: onRunSelection,
+              child: TextButton.icon(
+                onPressed: onRunSelection,
+                icon: const Icon(Icons.subject, size: 16),
+                label: Text(l.editorSelection, maxLines: 1, softWrap: false),
+              ),
+            ),
           ),
           const SizedBox(width: AppSpacing.xs),
-          FilledButton.icon(
-            onPressed: onRunFile,
-            icon: const Icon(Icons.play_arrow, size: 18),
-            label: const Text('Run'),
+          Tooltip(
+            message: l.editorRunFile,
+            excludeFromSemantics: true,
+            child: Semantics(
+              label: l.editorRunFile,
+              excludeSemantics: true,
+              button: true,
+              enabled: onRunFile != null,
+              onTap: onRunFile,
+              child: FilledButton.icon(
+                onPressed: onRunFile,
+                icon: const Icon(Icons.play_arrow, size: 18),
+                label: Text(l.commonRun, maxLines: 1, softWrap: false),
+              ),
+            ),
           ),
         ],
       ),
@@ -448,6 +469,8 @@ class _OutputPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextTheme t = Theme.of(context).textTheme;
+    final AtelierColors c = AtelierColors.of(context);
+    final AppLocalizations l = context.l10n;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -460,15 +483,22 @@ class _OutputPanel extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(open ? Icons.expand_more : Icons.expand_less, size: 18),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  'Output · ${language == KernelLanguage.r ? 'R' : 'Python'}',
-                  style: t.labelMedium,
+                Icon(
+                  open ? Icons.expand_more : Icons.expand_less,
+                  size: 18,
+                  semanticLabel: open ? l.editorHideOutput : l.editorShowOutput,
                 ),
-                const Spacer(),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    l.editorOutput(kernelLabel(language)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: t.labelMedium,
+                  ),
+                ),
                 IconButton(
-                  tooltip: 'Clear',
+                  tooltip: l.editorClearOutput,
                   icon: const Icon(Icons.cleaning_services_outlined, size: 16),
                   onPressed: () => kernel.clear(language),
                 ),
@@ -483,13 +513,9 @@ class _OutputPanel extends StatelessWidget {
               listenable: kernel,
               builder: (context, _) {
                 final List<ConsoleLine> lines = kernel.linesFor(language);
-                final bool isDark =
-                    Theme.of(context).brightness == Brightness.dark;
                 return Container(
                   width: double.infinity,
-                  color: isDark
-                      ? AppColors.darkSurface
-                      : AppColors.lightSurfaceAlt,
+                  color: c.background,
                   child: ListView.builder(
                     reverse: true,
                     padding: const EdgeInsets.all(AppSpacing.sm),
@@ -497,18 +523,14 @@ class _OutputPanel extends StatelessWidget {
                     itemBuilder: (context, i) {
                       final ConsoleLine line = lines[lines.length - 1 - i];
                       final Color color = switch (line.stream) {
-                        ConsoleStream.stderr => AppColors.danger,
-                        ConsoleStream.input => AppColors.accent,
-                        ConsoleStream.system =>
-                          isDark
-                              ? AppColors.darkTextMuted
-                              : AppColors.lightTextMuted,
-                        _ => isDark ? AppColors.darkText : AppColors.lightText,
+                        ConsoleStream.stderr => c.danger,
+                        ConsoleStream.input => c.accent,
+                        ConsoleStream.system => c.textMuted,
+                        _ => c.text,
                       };
+                      final String text = line.display(l, language);
                       return Text(
-                        line.stream == ConsoleStream.input
-                            ? '> ${line.text}'
-                            : line.text,
+                        line.stream == ConsoleStream.input ? '> $text' : text,
                         style: TextStyle(
                           fontFamily: AppFonts.mono,
                           fontFamilyFallback: AppFonts.monoFallback,

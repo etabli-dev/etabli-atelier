@@ -1,0 +1,7 @@
+# German and English UI strings. Edit lib/l10n/app_en.arb (template) and app_de.arb, then run
+# `flutter gen-l10n`; the generated Dart files are committed.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: true
